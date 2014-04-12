@@ -1,10 +1,56 @@
 # Nm
 
-TODO: Write a gem description
+JSON/BSON data structure template system.  Named for its two template methods: "node" and "map".
 
 ## Usage
 
-TODO: Write code samples and usage instructions here
+Template:
+
+```ruby
+# in views/slideshow.json.nm
+
+node 'slideshow' do
+  node 'start_slide', start_slide
+  node 'slides' do
+    map slides do |slide|
+      node 'id',    slide.id
+      node 'title', slide.title
+      node 'image', slide.image_url
+      node 'thumb', slide.thumb_url
+      node 'url',   slide.url
+    end
+  end
+end
+```
+
+Output:
+
+```json
+{ "slideshow": {
+    "start_slide": 1,
+    "slides": [
+      { "id":    "slide-1",
+        "title": "Slide 1",
+        "thumb": "//path/to/slide-1-thumb.jpg",
+        "image": "//path/to/slide-1-image.jpg",
+        "url":   "//path/to/slide-1-url",
+      },
+      { "id":    "slide-2",
+        "title": "Slide 2",
+        "thumb": "//path/to/slide-2-thumb.jpg",
+        "image": "//path/to/slide-2-image.jpg",
+        "url":   "//path/to/slide-2-url",
+      },
+      { "id":    "slide-3",
+        "title": "Slide 3",
+        "thumb": "//path/to/slide-3-thumb.jpg",
+        "image": "//path/to/slide-3-image.jpg",
+        "url":   "//path/to/slide-3-url",
+      }
+    ]
+  }
+}
+```
 
 ## Installation
 
