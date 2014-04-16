@@ -1,0 +1,12 @@
+node 'slideshow' do
+  node 'start_slide', view.start_slide
+  node 'slides' do
+    map view.slides do |slide|
+      node 'id',    slide.id
+      node 'image', slide.image_url
+      node 'thumb', slide.thumb_url
+      node 'title', slide.title
+      node 'url',   slide.url
+    end
+  end
+end
