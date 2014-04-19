@@ -26,7 +26,7 @@ end
 Render:
 
 ```ruby
-Nm::Template.new('/path/to/views/slideshow.json', {
+Nm::Render.new('/path/to/views/slideshow.json', {
   :start_slide => 1,
   :slides => [ ... ] #=> list of slide objects
 }).to_json
