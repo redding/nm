@@ -1,6 +1,6 @@
 module Nm
 
-  class Template
+  class Render
 
     SOURCE_EXT = ".nm"
 
