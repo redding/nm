@@ -6,6 +6,15 @@ module Nm
 
     def initialize(*args)
       @__dstack__ = [ nil ]
+
+      source_file = args.last.to_s
+      return if source_file.empty?
+
+      unless File.exists?(source_file)
+        raise ArgumentError, "source file `#{source_file}` does not exist"
+      end
+      data = File.send(File.respond_to?(:binread) ? :binread : :read, source_file)
+      instance_eval(data, source_file, 1)
     end
 
     def __data__
