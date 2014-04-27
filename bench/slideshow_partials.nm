@@ -1,0 +1,8 @@
+node 'slideshow' do
+  node 'start_slide', view.start_slide
+  node 'slides' do
+    map view.slides do |slide|
+      partial 'slide', :slide => slide
+    end
+  end
+end

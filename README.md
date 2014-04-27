@@ -76,6 +76,35 @@ There are two main markup methods:
 * `node`: create a named attribute on a hash object
 * `map`: create a list object mapped from a given list
 
+### Partials
+
+**Note**: using partials negatively impacts template rendering performance.
+
+(from example above)
+
+```ruby
+# in /path/to/views/slideshow.json.nm
+
+node 'slideshow' do
+  node 'start_slide', start_slide
+  node 'slides' do
+    map slides do |slide|
+      partial 'slide.json', :slide => slide
+    end
+  end
+end
+
+# in /path/to/views/_slide.json.nm
+
+node 'id',    slide.id
+node 'title', slide.title
+node 'image', slide.image_url
+node 'thumb', slide.thumb_url
+node 'url',   slide.url
+```
+
+This will render the same output as above.
+
 ### Markup Aliases
 
 If you find you need to use a local named `node` or `map`, these markup methods are aliased as

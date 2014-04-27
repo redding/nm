@@ -1,0 +1,5 @@
+node 'id',    slide.id
+node 'title', slide.title
+node 'image', slide.image_url
+node 'thumb', slide.thumb_url
+node 'url',   slide.url
