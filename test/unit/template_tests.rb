@@ -122,10 +122,10 @@ class Nm::Template
 
   end
 
-  class SourceTests < UnitTests
+  class SourceFileTests < UnitTests
     desc "when init given a source file"
     setup do
-      @obj_source_file = TEMPLATE_ROOT.join('obj.nm')
+      @obj_source_file = Factory.template_file('obj.nm')
       @exp_obj = {
         'obj' => {
           'a' => 'Aye',
@@ -134,7 +134,7 @@ class Nm::Template
         }
       }
 
-      @list_source_file = TEMPLATE_ROOT.join('list.nm')
+      @list_source_file = Factory.template_file('list.nm')
       @exp_list = [
         { '1' => 1 },
         { '2' => 2 },
@@ -154,10 +154,10 @@ class Nm::Template
 
   end
 
-  class NoExistSourceTests < UnitTests
+  class NoExistSourceFileTests < UnitTests
     desc "when init given a source file that does not exist"
     setup do
-      @no_exist_source_file = TEMPLATE_ROOT.join('does-not-exist.nm')
+      @no_exist_source_file = Factory.template_file('does-not-exist.nm')
     end
 
     should "complain that the source does not exist" do
@@ -187,7 +187,7 @@ class Nm::Template
     end
 
     should "not interfere with method aliases" do
-      d = Nm::Template.new(TEMPLATE_ROOT.join('aliases.nm'), @locals).__data__
+      d = Nm::Template.new(Factory.template_file('aliases.nm'), @locals).__data__
       assert_kind_of ::Array, d
       assert_equal 1, d.size
       assert_equal 'A Node', d.first['node local value']

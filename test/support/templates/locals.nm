@@ -1,0 +1,3 @@
+node 'locals' do
+  node 'key', key
+end
