@@ -118,4 +118,45 @@ class Nm::Template
 
   end
 
+  class SourceTests < UnitTests
+    desc "when init given a source file"
+    setup do
+      @obj_source_file = TEMPLATE_ROOT.join('obj.nm')
+      @exp_obj = {
+        'obj' => {
+          'a' => 'Aye',
+          'b' => 'Bee',
+          'c' => 'See'
+        }
+      }
+
+      @list_source_file = TEMPLATE_ROOT.join('list.nm')
+      @exp_list = [
+        { '1' => 1 },
+        { '2' => 2 },
+        { '3' => 3 }
+      ]
+    end
+
+    should "evaluate the source file" do
+      assert_equal @exp_obj,  Nm::Template.new(@obj_source_file).__data__
+      assert_equal @exp_list, Nm::Template.new(@list_source_file).__data__
+    end
+
+  end
+
+  class NoExistSourceTests < UnitTests
+    desc "when init given a source file that does not exist"
+    setup do
+      @no_exist_source_file = TEMPLATE_ROOT.join('does-not-exist.nm')
+    end
+
+    should "complain that the source does not exist" do
+      assert_raises ArgumentError do
+        Nm::Template.new(@no_exist_source_file)
+      end
+    end
+
+  end
+
 end
