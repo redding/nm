@@ -7,6 +7,12 @@ module Nm
     def initialize(*args)
       @__dstack__ = [ nil ]
 
+      # apply any given locals to template scope as methods
+      metaclass = class << self; self; end
+      (args.last.kind_of?(::Hash) ? args.pop : {}).each do |key, value|
+        metaclass.class_eval{ define_method(key){ value } }
+      end
+
       source_file = args.last.to_s
       return if source_file.empty?
 
@@ -21,7 +27,7 @@ module Nm
       @__dstack__.last
     end
 
-    def node(key, value = nil, &block)
+    def __node__(key, value = nil, &block)
       unless @__dstack__[-1].nil? || @__dstack__[-1].is_a?(::Hash)
         raise InvalidError, "invalid `node` call"
       end
@@ -34,10 +40,11 @@ module Nm
       return self
     end
 
-    alias_method :_node, :node
-    alias_method :n, :node
+    alias_method :node,  :__node__
+    alias_method :_node, :__node__
+    alias_method :n,     :__node__
 
-    def map(list, &block)
+    def __map__(list, &block)
       unless list.respond_to?(:map)
         raise ArgumentError, "given list (`#{list.class}`) doesn't respond to `.map`"
       end
@@ -55,8 +62,9 @@ module Nm
       return self
     end
 
-    alias_method :_map, :map
-    alias_method :m, :map
+    alias_method :map,  :__map__
+    alias_method :_map, :__map__
+    alias_method :m,    :__map__
 
   end
 
