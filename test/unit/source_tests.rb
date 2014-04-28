@@ -22,7 +22,7 @@ class Nm::Source
     subject{ @source }
 
     should have_readers :root
-    should have_imeths :data, :render
+    should have_imeths :data, :render, :partial
 
     should "know its root" do
       assert_equal @root, subject.root.to_s
@@ -52,8 +52,24 @@ class Nm::Source
     end
 
     should "render a template for the given file name and return its data" do
-      exp = Nm::Template.new(self, @file_path, @file_locals).__data__
+      exp = Nm::Template.new(subject, @file_path, @file_locals).__data__
       assert_equal exp, subject.render(@file_name, @file_locals)
+    end
+
+  end
+
+  class PartialTests < InitTests
+    desc "`partial` method"
+
+    setup do
+      @file_name = "locals"
+      @file_locals = { 'key' => 'a-value' }
+      @file_path = Factory.template_file("_#{@file_name}#{Nm::Source::EXT}")
+    end
+
+    should "render a template for the given file name and return its data" do
+      exp = Nm::Template.new(subject, @file_path, @file_locals).__data__
+      assert_equal exp, subject.partial(@file_name, @file_locals)
     end
 
   end

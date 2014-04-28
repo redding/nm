@@ -1,6 +1,9 @@
 require 'assert'
 require 'nm/template'
 
+require 'nm/ext'
+require 'nm/source'
+
 class Nm::Template
 
   class UnitTests < Assert::Context
@@ -16,20 +19,28 @@ class Nm::Template
     end
     subject{ @template }
 
-    should have_imeths :__data__, :__node__, :__map__
+    should have_imeths :__data__, :__node__, :__map__, :__render__, :__partial__
     should have_imeths :node, :_node, :n
     should have_imeths :map,  :_map,  :m
+    should have_imeths :render,  :_render,  :r
+    should have_imeths :partial, :_partial, :p
 
     should "have no data if no source file is given" do
       assert_nil subject.__data__
     end
 
-    should "return the template with `__node__` and `__map__`" do
+    should "return itself when its markup methods are called" do
       t = Nm::Template.new
       assert_equal t, t.__node__('key', 'value')
 
       t = Nm::Template.new
       assert_equal t, t.__map__([], &Proc.new{})
+
+      t = Nm::Template.new
+      assert_equal t, t.__render__(Factory.template_file('obj'))
+
+      t = Nm::Template.new
+      assert_equal t, t.__partial__(Factory.template_file('obj'))
     end
 
   end
@@ -56,9 +67,9 @@ class Nm::Template
       assert_equal exp, Nm::Template.new.n('a', 'Aye').__data__
     end
 
-    should "complain if called alongside a `__map__` call" do
+    should "complain if called after a `__map__` call" do
       t = Nm::Template.new.__map__([1,2,3])
-      assert_raises InvalidError do
+      assert_raises Nm::InvalidError do
         t.__node__('a', 'Aye')
       end
     end
@@ -113,10 +124,155 @@ class Nm::Template
       end
     end
 
-    should "complain if called alongside a `__node__` call" do
+    should "complain if called after a `__node__` call" do
       t = Nm::Template.new.__node__('a', 'Aye')
-      assert_raises InvalidError do
+      assert_raises Nm::InvalidError do
         t.__map__([1,2,3])
+      end
+    end
+
+  end
+
+  class RenderTests < InitTests
+    setup do
+      @source = Nm::Source.new(Factory.template_root)
+
+      @obj_file_name = "obj"
+      @obj = {
+        'obj' => {
+          'a' => 'Aye',
+          'b' => 'Bee',
+          'c' => 'See'
+        }
+      }
+
+      @list_file_name = "list"
+      @list = [
+        { '1' => 1 },
+        { '2' => 2 },
+        { '3' => 3 }
+      ]
+    end
+
+  end
+
+  class RenderMethodTests < RenderTests
+    desc "`render` method"
+
+    should "render a template for the given file name and add its data" do
+      t = Nm::Template.new(@source)
+      assert_equal @obj, t.__render__(@obj_file_name).__data__
+    end
+
+    should "be aliased as `render`, `_render` and `r`" do
+      t = Nm::Template.new(@source)
+      assert_equal @obj, t.__render__(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @obj, t.render(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @obj, t._render(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @obj, t.r(@obj_file_name).__data__
+    end
+
+    should "merge if call returns an obj and called after a `__node__` call" do
+      t = Nm::Template.new(@source)
+      t.__node__('1', 'One')
+
+      exp = {'1' => 'One'}.merge(@obj)
+      assert_equal exp, t.__render__(@obj_file_name).__data__
+    end
+
+    should "complain if call returns an obj and called after a `__map__` call" do
+      t = Nm::Template.new(@source)
+      t.__map__([1,2,3])
+      assert_raises Nm::InvalidError do
+        t.__render__(@obj_file_name).__data__
+      end
+    end
+
+    should "concat if call returns a list and called after a `__map__` call" do
+      t = Nm::Template.new(@source)
+      t.__map__([1,2,3])
+
+      exp = [1,2,3].concat(@list)
+      assert_equal exp, t.__render__(@list_file_name).__data__
+    end
+
+    should "complain if call returns a list and called after a `__node__` call" do
+      t = Nm::Template.new(@source)
+      t.__node__('1', 'One')
+
+      assert_raises Nm::InvalidError do
+        t.__render__(@list_file_name).__data__
+      end
+    end
+
+  end
+
+  class PartialMethodTests < RenderTests
+    desc "`partial` method"
+    setup do
+      @partial_obj = {
+        'a' => 'Aye',
+        'b' => 'Bee',
+        'c' => 'See'
+      }
+      @partial_list = @list
+    end
+
+    should "render a template for the given partial name and add its data" do
+      t = Nm::Template.new(@source)
+      assert_equal @partial_obj, t.__partial__(@obj_file_name).__data__
+    end
+
+    should "be aliased as `render`, `_render` and `r`" do
+      t = Nm::Template.new(@source)
+      assert_equal @partial_obj, t.__partial__(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @partial_obj, t.partial(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @partial_obj, t._partial(@obj_file_name).__data__
+
+      t = Nm::Template.new(@source)
+      assert_equal @partial_obj, t.p(@obj_file_name).__data__
+    end
+
+    should "merge if call returns an obj and called after a `__node__` call" do
+      t = Nm::Template.new(@source)
+      t.__node__('1', 'One')
+
+      exp = {'1' => 'One'}.merge(@partial_obj)
+      assert_equal exp, t.__partial__(@obj_file_name).__data__
+    end
+
+    should "complain if call returns an obj and called after a `__map__` call" do
+      t = Nm::Template.new(@source)
+      t.__map__([1,2,3])
+      assert_raises Nm::InvalidError do
+        t.__partial__(@obj_file_name).__data__
+      end
+    end
+
+    should "merge if call returns a list and called after a `__map__` call" do
+      t = Nm::Template.new(@source)
+      t.__map__([1,2,3])
+
+      exp = [1,2,3].concat(@partial_list)
+      assert_equal exp, t.__partial__(@list_file_name).__data__
+    end
+
+    should "complain if call returns a list and called after a `__node__` call" do
+      t = Nm::Template.new(@source)
+      t.__node__('1', 'One')
+
+      assert_raises Nm::InvalidError do
+        t.__partial__(@list_file_name).__data__
       end
     end
 

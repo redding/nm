@@ -1,10 +1,9 @@
 require 'nm/source'
+require 'nm/ext'
 
 module Nm
 
  class Template
-
-    class InvalidError < RuntimeError; end
 
     def initialize(*args)
       @__dstack__ = [ nil ]
@@ -32,9 +31,9 @@ module Nm
 
     def __node__(key, value = nil, &block)
       unless @__dstack__[-1].nil? || @__dstack__[-1].is_a?(::Hash)
-        raise InvalidError, "invalid `node` call"
+        raise Nm::InvalidError, "invalid `node` call"
       end
-      @__dstack__[-1] ||= Hash.new
+      @__dstack__[-1] ||= ::Hash.new
 
       @__dstack__.push(nil)
       self.instance_exec(&(block || Proc.new {}))
@@ -52,9 +51,9 @@ module Nm
         raise ArgumentError, "given list (`#{list.class}`) doesn't respond to `.map`"
       end
       unless @__dstack__[-1].nil? || @__dstack__[-1].is_a?(::Array)
-        raise InvalidError, "invalid `map` call"
+        raise Nm::InvalidError, "invalid `map` call"
       end
-      @__dstack__[-1] ||= Array.new
+      @__dstack__[-1] ||= ::Array.new
 
       list.map do |item|
         @__dstack__.push(nil)
@@ -68,6 +67,28 @@ module Nm
     alias_method :map,  :__map__
     alias_method :_map, :__map__
     alias_method :m,    :__map__
+
+    def __render__(*args)
+      data = @__source__.render(*args)
+      @__dstack__[-1] = @__dstack__[-1].__nm_add_call_data__('render', data)
+
+      return self
+    end
+
+    alias_method :render,  :__render__
+    alias_method :_render, :__render__
+    alias_method :r,       :__render__
+
+    def __partial__(*args)
+      data = @__source__.partial(*args)
+      @__dstack__[-1] = @__dstack__[-1].__nm_add_call_data__('partial', data)
+
+      return self
+    end
+
+    alias_method :partial,  :__partial__
+    alias_method :_partial, :__partial__
+    alias_method :p,        :__partial__
 
   end
 

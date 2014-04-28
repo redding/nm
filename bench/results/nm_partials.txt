@@ -1,0 +1,30 @@
+Nm slideshow_partials: 1 times
+------------------------------
+whysoslow? ..
+
+mem @ start             41 MB                   ??
+mem @ finish            41 MB                   [31m+   0 MB,   0%[0m
+
+          user      system    total     real
+time      20.0 ms   0.0 ms    20.0 ms   20.947 ms
+
+Nm slideshow_partials: 10 times
+-------------------------------
+whysoslow? ..
+
+mem @ start             41 MB                   ??
+mem @ finish            74 MB                   [31m+  33 MB,  81%[0m
+
+           user       system     total      real
+time       170.0 ms   30.0 ms    200.0 ms   196.232 ms
+
+Nm slideshow_partials: 100 times
+--------------------------------
+whysoslow? ..
+
+mem @ start             50 MB                   ??
+mem @ finish            531 MB                  [31m+ 480 MB, 952%[0m
+
+            user        system      total       real
+time        1640.0 ms   310.0 ms    1950.0 ms   1944.464 ms
+
