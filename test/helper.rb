@@ -7,7 +7,9 @@ require 'pathname'
 ROOT = Pathname.new(File.expand_path("../..", __FILE__))
 $LOAD_PATH.unshift(ROOT.to_s)
 
+TEMPLATE_ROOT = ROOT.join('test/support/templates')
+
 # require pry for debugging (`binding.pry`)
 require 'pry'
 
-TEMPLATE_ROOT = ROOT.join('test/support/templates')
+require 'test/support/factory'

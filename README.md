@@ -1,6 +1,6 @@
 # Nm
 
-JSON/BSON data structure template system.  Named for its two markup methods: "node" and "map".
+Data templating system.  Named for its two main markup methods: "node" and "map".  Designed to template data objects for JSON/BSON/whatever/etc serialization.
 
 ## Usage
 
@@ -26,35 +26,37 @@ end
 Render:
 
 ```ruby
-Nm::Render.new('/path/to/views/slideshow.json', {
+require 'nm'
+source = Nm::Source.new('/path/to/views')
+source.render('slideshow.json', {
   :start_slide => 1,
-  :slides => [ ... ] #=> list of slide objects
-}).to_json
+  :slides => [ ... ] #=> list of slide objects 1, 2 and 3
+})
 ```
 
 Output:
 
-```json
-{ "slideshow": {
-    "start_slide": 1,
-    "slides": [
-      { "id":    "slide-1",
-        "title": "Slide 1",
-        "thumb": "//path/to/slide-1-thumb.jpg",
-        "image": "//path/to/slide-1-image.jpg",
-        "url":   "//path/to/slide-1-url",
+```ruby
+{ "slideshow" => {
+    "start_slide" => 1,
+    "slides" => [
+      { "id"    => "slide-1",
+        "title" => "Slide 1",
+        "thumb" => "//path/to/slide-1-thumb.jpg",
+        "image" => "//path/to/slide-1-image.jpg",
+        "url"   => "//path/to/slide-1-url",
       },
-      { "id":    "slide-2",
-        "title": "Slide 2",
-        "thumb": "//path/to/slide-2-thumb.jpg",
-        "image": "//path/to/slide-2-image.jpg",
-        "url":   "//path/to/slide-2-url",
+      { "id"    => "slide-2",
+        "title" => "Slide 2",
+        "thumb" => "//path/to/slide-2-thumb.jpg",
+        "image" => "//path/to/slide-2-image.jpg",
+        "url"   => "//path/to/slide-2-url",
       },
-      { "id":    "slide-3",
-        "title": "Slide 3",
-        "thumb": "//path/to/slide-3-thumb.jpg",
-        "image": "//path/to/slide-3-image.jpg",
-        "url":   "//path/to/slide-3-url",
+      { "id"    => "slide-3",
+        "title" => "Slide 3",
+        "thumb" => "//path/to/slide-3-thumb.jpg",
+        "image" => "//path/to/slide-3-image.jpg",
+        "url"   => "//path/to/slide-3-url",
       }
     ]
   }
@@ -63,13 +65,9 @@ Output:
 
 ## Notes
 
-### Render Formats
+### Render Format
 
-You can render templates in 3 formats:
-
-* data: `.to_data` - return the raw data object
-* json: `.to_json` - serialize, requires the multi_json gem (http://rubygems.org/gems/multi_json)
-* bson: `.to_bson` - serialize, requires the bson gem (http://rubygems.org/gems/bson)
+Rendering templates returns a data object (`::Hash` or `::Array`).  To serialize, bring in your favorite JSON/BSON/whatever serializer and pass the rendered object to it.
 
 ### Markup Methods
 

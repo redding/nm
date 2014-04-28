@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version     = Nm::VERSION
   gem.authors     = ["Kelly Redding", "Collin Redding"]
   gem.email       = ["kelly@kellyredding.com", "collin.redding@me.com"]
-  gem.description = %q{JSON/BSON data structure template system }
-  gem.summary     = %q{JSON/BSON data structure template system }
+  gem.description = %q{Data templating system.}
+  gem.summary     = %q{Data templating system.}
   gem.homepage    = "http://github.com/redding/nm"
   gem.license     = 'MIT'
 
