@@ -56,19 +56,8 @@ class Nm::Source
       assert_equal exp, subject.render(@file_name, @file_locals)
     end
 
-  end
-
-  class PartialTests < InitTests
-    desc "`partial` method"
-
-    setup do
-      @file_name = "locals"
-      @file_locals = { 'key' => 'a-value' }
-      @file_path = Factory.template_file("_#{@file_name}#{Nm::Source::EXT}")
-    end
-
-    should "render a template for the given file name and return its data" do
-      exp = Nm::Template.new(subject, @file_path, @file_locals).__data__
+    should "alias `render` as `partial`" do
+      exp = subject.render(@file_name, @file_locals)
       assert_equal exp, subject.partial(@file_name, @file_locals)
     end
 
