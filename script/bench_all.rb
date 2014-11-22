@@ -1,4 +1,4 @@
-# $ bundle exec ruby script/bench.rb
+# $ bundle exec ruby script/bench_all.rb
 
 require 'script/bench_rabl'
 require 'script/bench_nm'

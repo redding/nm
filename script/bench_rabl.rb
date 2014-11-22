@@ -1,4 +1,4 @@
-# $ bundle exec ruby script/bench.rb
+# $ bundle exec ruby script/bench_rabl.rb
 
 # require pry for debugging (`binding.pry`)
 require 'pry'
