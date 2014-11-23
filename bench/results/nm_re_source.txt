@@ -6,25 +6,25 @@ mem @ start             41 MB                   ??
 mem @ finish            41 MB                   [31m+   0 MB,   0%[0m
 
          user     system   total    real
-time     0.0 ms   0.0 ms   0.0 ms   6.727 ms
+time     10.0 ms  0.0 ms   10.0 ms  4.966 ms
 
 Nm slideshow: 10 times
 ----------------------
 whysoslow? ..
 
 mem @ start             41 MB                   ??
-mem @ finish            51 MB                   [31m+  10 MB,  23%[0m
+mem @ finish            53 MB                   [31m+  12 MB,  30%[0m
 
           user      system    total     real
-time      40.0 ms   10.0 ms   50.0 ms   40.104 ms
+time      30.0 ms   10.0 ms   40.0 ms   38.769 ms
 
 Nm slideshow: 100 times
 -----------------------
 whysoslow? ..
 
-mem @ start             50 MB                   ??
-mem @ finish            209 MB                  [31m+ 159 MB, 320%[0m
+mem @ start             53 MB                   ??
+mem @ finish            213 MB                  [31m+ 160 MB, 300%[0m
 
            user       system     total      real
-time       310.0 ms   60.0 ms    370.0 ms   376.581 ms
+time       330.0 ms   60.0 ms    390.0 ms   386.509 ms
 

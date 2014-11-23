@@ -10,18 +10,20 @@ module Nm
 
       # apply any given locals to template scope as methods
       metaclass = class << self; self; end
-      (args.last.kind_of?(::Hash) ? args.pop : {}).each do |key, value|
-        metaclass.class_eval{ define_method(key){ value } }
+      metaclass.class_eval do
+        (args.last.kind_of?(::Hash) ? args.pop : {}).each do |key, value|
+          define_method(key){ value }
+        end
       end
 
       source_file = args.last.kind_of?(::String) ? args.pop : ''
       @__source__ = args.last.kind_of?(Source) ? args.pop : DefaultSource.new
 
       return if source_file.empty?
-
-      unless File.exists?(source_file)
+      if !File.exists?(source_file)
         raise ArgumentError, "source file `#{source_file}` does not exist"
       end
+
       instance_eval(@__source__.data(source_file), source_file, 1)
     end
 

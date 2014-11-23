@@ -2,29 +2,29 @@ RABL slideshow: 1 times
 -----------------------
 whysoslow? ..
 
-mem @ start             40 MB                   ??
-mem @ finish            40 MB                   [31m+   0 MB,   0%[0m
+mem @ start             43 MB                   ??
+mem @ finish            44 MB                   [31m+   1 MB,   2%[0m
 
           user      system    total     real
-time      10.0 ms   0.0 ms    10.0 ms   18.029 ms
+time      20.0 ms   0.0 ms    20.0 ms   24.123 ms
 
 RABL slideshow: 10 times
 ------------------------
 whysoslow? ..
 
-mem @ start             40 MB                   ??
-mem @ finish            85 MB                   [31m+  45 MB, 112%[0m
+mem @ start             44 MB                   ??
+mem @ finish            87 MB                   [31m+  43 MB,  98%[0m
 
-           user       system     total      real
-time       170.0 ms   20.0 ms    190.0 ms   193.534 ms
+          user      system    total     real
+time      150.0 ms  20.0 ms   170.0 ms  178.32 ms
 
 RABL slideshow: 100 times
 -------------------------
 whysoslow? ..
 
 mem @ start             69 MB                   ??
-mem @ finish            458 MB                  [31m+ 389 MB, 565%[0m
+mem @ finish            461 MB                  [31m+ 392 MB, 567%[0m
 
             user        system      total       real
-time        1530.0 ms   190.0 ms    1720.0 ms   1720.782 ms
+time        1480.0 ms   180.0 ms    1660.0 ms   1647.708 ms
 
