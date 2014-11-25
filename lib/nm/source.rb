@@ -7,10 +7,13 @@ module Nm
 
     EXT = ".nm"
 
-    attr_reader :root
+    attr_reader :root, :template_class
 
-    def initialize(root)
+    def initialize(root, locals = nil)
       @root = Pathname.new(root.to_s)
+      @template_class = Class.new(Template) do
+        (locals || {}).each{ |key, value| define_method(key){ value } }
+      end
     end
 
     def data(file_path)
@@ -18,7 +21,7 @@ module Nm
     end
 
     def render(file_name, locals = nil)
-      Template.new(self, source_file_path(file_name), locals || {}).__data__
+      @template_class.new(self, source_file_path(file_name), locals || {}).__data__
     end
 
     alias_method :partial, :render

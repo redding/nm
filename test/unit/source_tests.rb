@@ -1,6 +1,8 @@
 require 'assert'
 require 'nm/source'
 
+require 'nm/template'
+
 class Nm::Source
 
   class UnitTests < Assert::Context
@@ -21,11 +23,24 @@ class Nm::Source
     end
     subject{ @source }
 
-    should have_readers :root
+    should have_readers :root, :template_class
     should have_imeths :data, :render, :partial
 
     should "know its root" do
       assert_equal @root, subject.root.to_s
+    end
+
+    should "know its template class" do
+      assert_true subject.template_class < Nm::Template
+    end
+
+    should "optionally take and apply default locals to its template class" do
+      local_name, local_val = [Factory.string, Factory.string]
+      source = Nm::Source.new(@root, local_name => local_val)
+      template = source.template_class.new
+
+      assert_responds_to local_name, template
+      assert_equal local_val, template.send(local_name)
     end
 
   end
