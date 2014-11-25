@@ -16,6 +16,10 @@ module Nm
       end
     end
 
+    def inspect
+      "#<#{self.class}:#{'0x0%x' % (object_id << 1)} @root=#{@root.inspect}>"
+    end
+
     def data(file_path)
       File.send(File.respond_to?(:binread) ? :binread : :read, file_path)
     end
