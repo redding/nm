@@ -27,6 +27,12 @@ module Nm
       instance_eval(@__source__.data(source_file), source_file, 1)
     end
 
+    def inspect
+      "#<Template:#{@__source__.class}:#{'0x0%x' % (@__source__.object_id << 1)}"\
+      " @__source__.root=#{@__source__.root.to_s.inspect}"\
+      " __data__=#{self.__data__.inspect}>"
+    end
+
     def __data__
       @__dstack__.last
     end
