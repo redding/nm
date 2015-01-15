@@ -59,7 +59,7 @@ module NmBench
 
     def initialize(template_name, printer_io, num_times = 10)
       template = Template.find(template_name)
-      source = Nm::Source.new(File.expand_path('..', __FILE__))
+      source = Nm::Source.new(File.expand_path('..', __FILE__), :cache => true)
       super(printer_io, "Nm #{template.name}", num_times) do
         out = source.render(template.name, template.locals)
       end
@@ -73,8 +73,8 @@ module NmBench
 
     def initialize(template_name, printer_io, num_times = 10)
       template = Template.find(template_name)
-      super(printer_io, "Nm #{template.name}", num_times) do
-        source = Nm::Source.new(File.expand_path('..', __FILE__))
+      super(printer_io, "Nm (re-source) #{template.name}", num_times) do
+        source = Nm::Source.new(File.expand_path('..', __FILE__), :cache => true)
         out = source.render(template.name, template.locals)
       end
     end

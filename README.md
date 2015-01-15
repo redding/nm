@@ -65,6 +65,24 @@ Output:
 
 ## Notes
 
+### Cache Templates
+
+By default the source doesn't cache template files.  You can configure it to cache templates using the `:cache` option:
+
+```ruby
+source = Nm::Source.new('/path/to/views', :cache => true)
+```
+
+### Default locals
+
+You can specify a set of default locals to use on all renders for a source using the `:locals` option:
+
+```ruby
+source = Nm::Source.new('/path/to/views', :locals => {
+  'something' => 'value'
+})
+```
+
 ### Render Format
 
 Rendering templates returns a data object (`::Hash` or `::Array`).  To serialize, bring in your favorite JSON/BSON/whatever serializer and pass the rendered object to it.

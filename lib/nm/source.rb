@@ -7,12 +7,15 @@ module Nm
 
     EXT = ".nm"
 
-    attr_reader :root, :template_class
+    attr_reader :root, :cache, :template_class
 
-    def initialize(root, locals = nil)
-      @root = Pathname.new(root.to_s)
+    def initialize(root, opts = nil)
+      opts ||= {}
+      @root  = Pathname.new(root.to_s)
+      @cache = opts[:cache] ? Hash.new : NullCache.new
+
       @template_class = Class.new(Template) do
-        (locals || {}).each{ |key, value| define_method(key){ value } }
+        (opts[:locals] || {}).each{ |key, value| define_method(key){ value } }
       end
     end
 
@@ -21,7 +24,9 @@ module Nm
     end
 
     def data(file_path)
-      File.send(File.respond_to?(:binread) ? :binread : :read, file_path)
+      @cache[file_path] ||= begin
+        File.send(File.respond_to?(:binread) ? :binread : :read, file_path)
+      end
     end
 
     def render(file_name, locals = nil)
@@ -34,6 +39,12 @@ module Nm
 
     def source_file_path(file_name)
       self.root.join("#{file_name}#{EXT}").to_s
+    end
+
+    class NullCache
+      def [](file_name);         end
+      def []=(file_name, value); end
+      def keys; [];              end
     end
 
   end
