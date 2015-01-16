@@ -7,7 +7,10 @@ class Nm::Source
 
   class UnitTests < Assert::Context
     desc "Nm::Source"
-    subject{ Nm::Source }
+    setup do
+      @source_class = Nm::Source
+    end
+    subject{ @source_class }
 
     should "know its extension" do
       assert_equal ".nm", subject::EXT
@@ -19,15 +22,24 @@ class Nm::Source
     desc "when init"
     setup do
       @root = Factory.template_root
-      @source = Nm::Source.new(@root)
+      @source = @source_class.new(@root)
     end
     subject{ @source }
 
-    should have_readers :root, :template_class
+    should have_readers :root, :cache, :template_class
     should have_imeths :data, :render, :partial
 
     should "know its root" do
       assert_equal @root, subject.root.to_s
+    end
+
+    should "not cache templates by default" do
+      assert_kind_of NullCache, subject.cache
+    end
+
+    should "cache templates if the :cache opt is `true`" do
+      source = @source_class.new(@root, :cache => true)
+      assert_kind_of Hash, source.cache
     end
 
     should "know its template class" do
@@ -36,7 +48,9 @@ class Nm::Source
 
     should "optionally take and apply default locals to its template class" do
       local_name, local_val = [Factory.string, Factory.string]
-      source = Nm::Source.new(@root, local_name => local_val)
+      source = @source_class.new(@root, :locals => {
+        local_name => local_val
+      })
       template = source.template_class.new
 
       assert_responds_to local_name, template
@@ -56,6 +70,19 @@ class Nm::Source
       assert_equal exp, subject.data(@file_path)
     end
 
+    should "not cache template source by default" do
+      assert_equal [], subject.cache.keys
+    end
+
+    should "cache template source by file path if enabled" do
+      source = @source_class.new(@root, :cache => true)
+
+      exp = File.read(@file_path)
+      assert_equal exp, source.data(@file_path)
+      assert_equal [@file_path], source.cache.keys
+      assert_equal exp, source.cache[@file_path]
+    end
+
   end
 
   class RenderTests < InitTests
@@ -63,7 +90,7 @@ class Nm::Source
     setup do
       @file_name = "locals"
       @file_locals = { 'key' => 'a-value' }
-      @file_path = Factory.template_file("#{@file_name}#{Nm::Source::EXT}")
+      @file_path = Factory.template_file("#{@file_name}#{@source_class::EXT}")
     end
 
     should "render a template for the given file name and return its data" do
@@ -86,7 +113,7 @@ class Nm::Source
     subject{ @source }
 
     should "be a Source" do
-      assert_kind_of Nm::Source, subject
+      assert_kind_of @source_class, subject
     end
 
     should "use `/` as its root" do
