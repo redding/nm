@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version     = Nm::VERSION
   gem.authors     = ["Kelly Redding", "Collin Redding"]
   gem.email       = ["kelly@kellyredding.com", "collin.redding@me.com"]
-  gem.description = %q{Data templating system.}
   gem.summary     = %q{Data templating system.}
+  gem.description = %q{Data templating system.}
   gem.homepage    = "http://github.com/redding/nm"
   gem.license     = 'MIT'
 
@@ -21,6 +21,6 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_development_dependency("assert", ["~> 2.12"])
+  gem.add_development_dependency("assert", ["~> 2.15.1"])
 
 end
