@@ -125,8 +125,7 @@ This will render the same output as above.
 
 ### Markup Aliases
 
-If you find you need to use a local named `node` or `map`, these markup methods are aliased as
-`n`, `_node`, `m`, and `_map` respectively.  Any combination of aliases is valid:
+If you find you need to use a local named `node` or `map`, the markup methods are aliased as `n`, `_node`, `m`, and `_map` respectively.  Any combination of aliases is valid:
 
 ```ruby
 node 'slideshow' do
