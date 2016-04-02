@@ -88,19 +88,19 @@ class Nm::Source
   class RenderTests < InitTests
     desc "`render` method"
     setup do
-      @file_name = "locals"
+      @template_name = "locals"
       @file_locals = { 'key' => 'a-value' }
-      @file_path = Factory.template_file("#{@file_name}#{@source_class::EXT}")
+      @file_path = Factory.template_file("#{@template_name}#{@source_class::EXT}")
     end
 
-    should "render a template for the given file name and return its data" do
+    should "render a template for the given template name and return its data" do
       exp = Nm::Template.new(subject, @file_path, @file_locals).__data__
-      assert_equal exp, subject.render(@file_name, @file_locals)
+      assert_equal exp, subject.render(@template_name, @file_locals)
     end
 
     should "alias `render` as `partial`" do
-      exp = subject.render(@file_name, @file_locals)
-      assert_equal exp, subject.partial(@file_name, @file_locals)
+      exp = subject.render(@template_name, @file_locals)
+      assert_equal exp, subject.partial(@template_name, @file_locals)
     end
 
   end

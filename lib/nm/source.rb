@@ -29,22 +29,22 @@ module Nm
       end
     end
 
-    def render(file_name, locals = nil)
-      @template_class.new(self, source_file_path(file_name), locals || {}).__data__
+    def render(template_name, locals = nil)
+      @template_class.new(self, source_file_path(template_name), locals || {}).__data__
     end
 
     alias_method :partial, :render
 
     private
 
-    def source_file_path(file_name)
-      self.root.join("#{file_name}#{EXT}").to_s
+    def source_file_path(template_name)
+      self.root.join("#{template_name}#{EXT}").to_s
     end
 
     class NullCache
-      def [](file_name);         end
-      def []=(file_name, value); end
-      def keys; [];              end
+      def [](template_name);         end
+      def []=(template_name, value); end
+      def keys; [];                  end
     end
 
   end

@@ -137,7 +137,7 @@ class Nm::Template
     setup do
       @source = Nm::Source.new(Factory.template_root)
 
-      @obj_file_name = "obj"
+      @obj_template_name = "obj"
       @obj = {
         'obj' => {
           'a' => 'Aye',
@@ -146,7 +146,7 @@ class Nm::Template
         }
       }
 
-      @list_file_name = "list"
+      @list_template_name = "list"
       @list = [
         { '1' => 1 },
         { '2' => 2 },
@@ -159,23 +159,23 @@ class Nm::Template
   class RenderMethodTests < RenderTests
     desc "`render` method"
 
-    should "render a template for the given file name and add its data" do
+    should "render a template for the given template name and add its data" do
       t = Nm::Template.new(@source)
-      assert_equal @obj, t.__render__(@obj_file_name).__data__
+      assert_equal @obj, t.__render__(@obj_template_name).__data__
     end
 
     should "be aliased as `render`, `_render` and `r`" do
       t = Nm::Template.new(@source)
-      assert_equal @obj, t.__render__(@obj_file_name).__data__
+      assert_equal @obj, t.__render__(@obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @obj, t.render(@obj_file_name).__data__
+      assert_equal @obj, t.render(@obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @obj, t._render(@obj_file_name).__data__
+      assert_equal @obj, t._render(@obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @obj, t.r(@obj_file_name).__data__
+      assert_equal @obj, t.r(@obj_template_name).__data__
     end
 
     should "merge if call returns an obj and called after a `__node__` call" do
@@ -183,14 +183,14 @@ class Nm::Template
       t.__node__('1', 'One')
 
       exp = {'1' => 'One'}.merge(@obj)
-      assert_equal exp, t.__render__(@obj_file_name).__data__
+      assert_equal exp, t.__render__(@obj_template_name).__data__
     end
 
     should "complain if call returns an obj and called after a `__map__` call" do
       t = Nm::Template.new(@source)
       t.__map__([1,2,3])
       assert_raises Nm::InvalidError do
-        t.__render__(@obj_file_name).__data__
+        t.__render__(@obj_template_name).__data__
       end
     end
 
@@ -199,7 +199,7 @@ class Nm::Template
       t.__map__([1,2,3])
 
       exp = [1,2,3].concat(@list)
-      assert_equal exp, t.__render__(@list_file_name).__data__
+      assert_equal exp, t.__render__(@list_template_name).__data__
     end
 
     should "complain if call returns a list and called after a `__node__` call" do
@@ -207,7 +207,7 @@ class Nm::Template
       t.__node__('1', 'One')
 
       assert_raises Nm::InvalidError do
-        t.__render__(@list_file_name).__data__
+        t.__render__(@list_template_name).__data__
       end
     end
 
@@ -216,33 +216,33 @@ class Nm::Template
   class PartialMethodTests < RenderTests
     desc "`partial` method"
     setup do
-      @partial_obj_file_name = "_obj"
+      @partial_obj_template_name = "_obj"
       @partial_obj = {
         'a' => 'Aye',
         'b' => 'Bee',
         'c' => 'See'
       }
-      @partial_list_file_name = "_list"
+      @partial_list_template_name = "_list"
       @partial_list = @list
     end
 
     should "render a template for the given partial name and add its data" do
       t = Nm::Template.new(@source)
-      assert_equal @partial_obj, t.__partial__(@partial_obj_file_name).__data__
+      assert_equal @partial_obj, t.__partial__(@partial_obj_template_name).__data__
     end
 
     should "be aliased as `render`, `_render` and `r`" do
       t = Nm::Template.new(@source)
-      assert_equal @partial_obj, t.__partial__(@partial_obj_file_name).__data__
+      assert_equal @partial_obj, t.__partial__(@partial_obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @partial_obj, t.partial(@partial_obj_file_name).__data__
+      assert_equal @partial_obj, t.partial(@partial_obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @partial_obj, t._partial(@partial_obj_file_name).__data__
+      assert_equal @partial_obj, t._partial(@partial_obj_template_name).__data__
 
       t = Nm::Template.new(@source)
-      assert_equal @partial_obj, t.p(@partial_obj_file_name).__data__
+      assert_equal @partial_obj, t.p(@partial_obj_template_name).__data__
     end
 
     should "merge if call returns an obj and called after a `__node__` call" do
@@ -250,14 +250,14 @@ class Nm::Template
       t.__node__('1', 'One')
 
       exp = {'1' => 'One'}.merge(@partial_obj)
-      assert_equal exp, t.__partial__(@partial_obj_file_name).__data__
+      assert_equal exp, t.__partial__(@partial_obj_template_name).__data__
     end
 
     should "complain if call returns an obj and called after a `__map__` call" do
       t = Nm::Template.new(@source)
       t.__map__([1,2,3])
       assert_raises Nm::InvalidError do
-        t.__partial__(@partial_obj_file_name).__data__
+        t.__partial__(@partial_obj_template_name).__data__
       end
     end
 
@@ -266,7 +266,7 @@ class Nm::Template
       t.__map__([1,2,3])
 
       exp = [1,2,3].concat(@partial_list)
-      assert_equal exp, t.__partial__(@partial_list_file_name).__data__
+      assert_equal exp, t.__partial__(@partial_list_template_name).__data__
     end
 
     should "complain if call returns a list and called after a `__node__` call" do
@@ -274,7 +274,7 @@ class Nm::Template
       t.__node__('1', 'One')
 
       assert_raises Nm::InvalidError do
-        t.__partial__(@partial_list_file_name).__data__
+        t.__partial__(@partial_list_template_name).__data__
       end
     end
 
