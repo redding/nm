@@ -5,8 +5,6 @@ module Nm
 
   class Source
 
-    EXT = ".nm"
-
     attr_reader :root, :cache, :template_class
 
     def initialize(root, opts = nil)
@@ -38,7 +36,7 @@ module Nm
     private
 
     def source_file_path(template_name)
-      self.root.join("#{template_name}#{EXT}").to_s
+      Dir.glob(self.root.join("#{template_name}*")).first
     end
 
     class NullCache

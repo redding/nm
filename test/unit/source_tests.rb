@@ -12,10 +12,6 @@ class Nm::Source
     end
     subject{ @source_class }
 
-    should "know its extension" do
-      assert_equal ".nm", subject::EXT
-    end
-
   end
 
   class InitTests < UnitTests
@@ -88,9 +84,9 @@ class Nm::Source
   class RenderTests < InitTests
     desc "`render` method"
     setup do
-      @template_name = "locals"
+      @template_name = ['locals', 'locals_alt'].choice
       @file_locals = { 'key' => 'a-value' }
-      @file_path = Factory.template_file("#{@template_name}#{@source_class::EXT}")
+      @file_path = Dir.glob("#{Factory.template_file(@template_name)}*").first
     end
 
     should "render a template for the given template name and return its data" do
