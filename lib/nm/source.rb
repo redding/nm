@@ -5,11 +5,12 @@ module Nm
 
   class Source
 
-    attr_reader :root, :cache, :template_class
+    attr_reader :root, :ext, :cache, :template_class
 
     def initialize(root, opts = nil)
       opts ||= {}
       @root  = Pathname.new(root.to_s)
+      @ext   = opts[:ext] ? ".#{opts[:ext]}" : nil
       @cache = opts[:cache] ? Hash.new : NullCache.new
 
       @template_class = Class.new(Template) do
@@ -28,15 +29,22 @@ module Nm
     end
 
     def render(template_name, locals = nil)
-      @template_class.new(self, source_file_path(template_name), locals || {}).__data__
+      if (filename = source_file_path(template_name)).nil?
+        template_desc = "a template file named #{template_name.inspect}"
+        if !@ext.nil?
+          template_desc += " that ends in #{@ext.inspect}"
+        end
+        raise ArgumentError, "#{template_desc} does not exist"
+      end
+      @template_class.new(self, filename, locals || {}).__data__
     end
 
     alias_method :partial, :render
 
     private
 
-    def source_file_path(template_name)
-      Dir.glob(self.root.join("#{template_name}*")).first
+    def source_file_path(name)
+      Dir.glob(self.root.join(name.end_with?(@ext) ? name : "#{name}*#{@ext}")).first
     end
 
     class NullCache
