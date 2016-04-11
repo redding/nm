@@ -22,11 +22,19 @@ class Nm::Source
     end
     subject{ @source }
 
-    should have_readers :root, :cache, :template_class
+    should have_readers :root, :ext, :cache, :template_class
     should have_imeths :data, :render, :partial
 
     should "know its root" do
       assert_equal @root, subject.root.to_s
+    end
+
+    should "know its extension for looking up source files" do
+      assert_nil subject.ext
+
+      ext = Factory.string
+      source = @source_class.new(@root, :ext => ext)
+      assert_equal ".#{ext}", source.ext
     end
 
     should "not cache templates by default" do
@@ -97,6 +105,32 @@ class Nm::Source
     should "alias `render` as `partial`" do
       exp = subject.render(@template_name, @file_locals)
       assert_equal exp, subject.partial(@template_name, @file_locals)
+    end
+
+    should "only render templates with the matching ext if one is specified" do
+      source = @source_class.new(@root, :ext => 'nm')
+      file_path = Factory.template_file('locals.nm')
+      exp = Nm::Template.new(source, file_path, @file_locals).__data__
+      ['locals', 'locals.nm'].each do |name|
+        assert_equal exp, source.render(name, @file_locals)
+      end
+
+      source = @source_class.new(@root, :ext => 'inem')
+      file_path = Factory.template_file('locals_alt.data.inem')
+      exp = Nm::Template.new(source, file_path, @file_locals).__data__
+      ['locals', 'locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+        assert_equal exp, source.render(name, @file_locals)
+      end
+
+      source = @source_class.new(@root, :ext => 'nm')
+      ['locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+        assert_raises(ArgumentError){ source.render(name, @file_locals) }
+      end
+
+      source = @source_class.new(@root, :ext => 'data')
+      ['locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+        assert_raises(ArgumentError){ source.render(name, @file_locals) }
+      end
     end
 
   end
