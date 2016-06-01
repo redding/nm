@@ -92,7 +92,7 @@ class Nm::Source
   class RenderTests < InitTests
     desc "`render` method"
     setup do
-      @template_name = ['locals', 'locals_alt'].choice
+      @template_name = ['locals', 'locals_alt'].sample
       @file_locals = { 'key' => 'a-value' }
       @file_path = Dir.glob("#{Factory.template_file(@template_name)}*").first
     end
