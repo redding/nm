@@ -44,7 +44,11 @@ module Nm
     private
 
     def source_file_path(name)
-      Dir.glob(self.root.join(name.end_with?(@ext) ? name : "#{name}*#{@ext}")).first
+      Dir.glob(self.root.join(source_file_glob_string(name))).first
+    end
+
+    def source_file_glob_string(name)
+      !@ext.nil? && name.end_with?(@ext) ? name : "#{name}*#{@ext}"
     end
 
     class NullCache
