@@ -6,7 +6,7 @@ module Nm
  class Template
 
     def initialize(*args)
-      @__dstack__ = [ nil ]
+      @__dstack__ = [nil]
 
       # apply any given locals to template scope as methods
       metaclass = class << self; self; end
@@ -34,7 +34,7 @@ module Nm
     end
 
     def __data__
-      @__dstack__.last
+      @__dstack__.last || ::Hash.new
     end
 
     def __node__(key, value = nil, &block)

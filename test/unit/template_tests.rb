@@ -25,8 +25,8 @@ class Nm::Template
     should have_imeths :render,  :_render,  :r
     should have_imeths :partial, :_partial, :p
 
-    should "have no data if no source file is given" do
-      assert_nil subject.__data__
+    should "have empty data if no markup meths called or no source given" do
+      assert_equal ::Hash.new, subject.__data__
     end
 
     should "return itself when its markup methods are called" do
