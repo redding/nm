@@ -94,6 +94,29 @@ There are two main markup methods:
 * `node`: create a named attribute on a hash object
 * `map`: create a list object mapped from a given list
 
+### Default render value
+
+Nm templates render an empty object (ie `::Hash.new`) if no source is given or no markup methods are called in the template source.  The idea is that the templates should always return *something* and avoid `nil` values as much as possible.
+
+This is also more consistent with rendering mapped lists vs reduced objects.  Say your are mapping a list of objects in your template (using the `map` markup method):
+
+```ruby
+map incoming_list do |item|
+  node 'name',  item.name
+  node 'value', item.value
+end
+```
+
+If there are no items in the incoming list, the template render produces an empty list.  Now say you are reducing an incoming list to a single object:
+
+```ruby
+incoming_list.each do |item|
+  node item.name, item.value
+end
+```
+
+If there are no items in the incoming list, no markup methods are called, but the template render still produces an empty object b/c that is the default value.
+
 ### Partials
 
 **Note**: using partials negatively impacts template rendering performance.
