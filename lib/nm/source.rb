@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "pathname"
 require "nm/template"
 
@@ -10,7 +12,7 @@ class Nm::Source
     opts ||= {}
     @root = Pathname.new(root.to_s)
     @ext = opts[:ext] ? ".#{opts[:ext]}" : nil
-    @cache = opts[:cache] ? Hash.new : NullCache.new
+    @cache = opts[:cache] ? {} : NullCache.new
 
     @template_class =
       Class.new(Nm::Template) do
@@ -32,9 +34,7 @@ class Nm::Source
   def render(template_name, locals = nil)
     if (filename = source_file_path(template_name)).nil?
       template_desc = "a template file named #{template_name.inspect}"
-      if !@ext.nil?
-        template_desc += " that ends in #{@ext.inspect}"
-      end
+      template_desc += " that ends in #{@ext.inspect}" unless @ext.nil?
       raise ArgumentError, "#{template_desc} does not exist"
     end
     @template_class.new(self, filename, locals || {}).__data__
@@ -45,7 +45,7 @@ class Nm::Source
   private
 
   def source_file_path(name)
-    Dir.glob(self.root.join(source_file_glob_string(name))).first
+    Dir.glob(root.join(source_file_glob_string(name))).first
   end
 
   def source_file_glob_string(name)
@@ -53,9 +53,15 @@ class Nm::Source
   end
 
   class NullCache
-    def [](template_name);         end
-    def []=(template_name, value); end
-    def keys; [];                  end
+    def [](template_name)
+    end
+
+    def []=(template_name, value)
+    end
+
+    def keys
+      []
+    end
   end
 end
 

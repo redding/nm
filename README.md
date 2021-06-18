@@ -28,10 +28,11 @@ Render:
 ```ruby
 require "nm"
 source = Nm::Source.new("/path/to/views")
-source.render("slideshow.json", {
-  :start_slide => 1,
-  :slides => [ ... ] #=> list of slide objects 1, 2 and 3
-})
+source.render(
+  "slideshow.json",
+  start_slide: 1,
+  slides: [ ... ] #=> list of slide objects 1, 2 and 3
+)
 ```
 
 Output:
@@ -70,7 +71,7 @@ Output:
 By default the source doesn't cache template files. You can configure it to cache templates using the `:cache` option:
 
 ```ruby
-source = Nm::Source.new("/path/to/views", :cache => true)
+source = Nm::Source.new("/path/to/views", cache: true)
 ```
 
 ### Default locals
@@ -78,9 +79,8 @@ source = Nm::Source.new("/path/to/views", :cache => true)
 You can specify a set of default locals to use on all renders for a source using the `:locals` option:
 
 ```ruby
-source = Nm::Source.new("/path/to/views", :locals => {
-  "something" => "value"
-})
+source =
+  Nm::Source.new("/path/to/views", locals: { "something" => "value" })
 ```
 
 ### Render Format

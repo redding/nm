@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "assert"
 require "nm/template"
 
@@ -23,7 +25,7 @@ class Nm::Template
     should have_imeths :partial, :_partial, :p
 
     should "have empty data if no markup meths called or no source given" do
-      assert_that(subject.__data__).equals(::Hash.new)
+      assert_that(subject.__data__).equals({})
     end
 
     should "return itself when its markup methods are called" do
@@ -46,17 +48,17 @@ class Nm::Template
 
     should "add key-value pairs at any level" do
       t = Nm::Template.new.__node__("a", "Aye")
-      assert_that(t.__data__).equals({"a" => "Aye"})
+      assert_that(t.__data__).equals({ "a" => "Aye" })
 
       t = Nm::Template.new.__node__("nested"){ __node__("a", "Aye") }
       assert_that(t.__data__)
         .equals({
-          "nested" => {"a" => "Aye"}
+          "nested" => { "a" => "Aye" },
         })
     end
 
     should "be aliased as `node`, `_node` and `n`" do
-      exp = {"a" => "Aye"}
+      exp = { "a" => "Aye" }
       assert_that(Nm::Template.new.__node__("a", "Aye").__data__).equals(exp)
       assert_that(Nm::Template.new.node("a", "Aye").__data__).equals(exp)
       assert_that(Nm::Template.new._node("a", "Aye").__data__).equals(exp)
@@ -64,7 +66,7 @@ class Nm::Template
     end
 
     should "complain if called after a `__map__` call" do
-      t = Nm::Template.new.__map__([1,2,3])
+      t = Nm::Template.new.__map__([1, 2, 3])
       assert_that{ t.__node__("a", "Aye") }.raises(Nm::InvalidError)
     end
   end
@@ -72,25 +74,25 @@ class Nm::Template
   class MapMethodTests < UnitTests
     desc "`map` method"
 
-    let(:list){ [1,2,3] }
+    let(:list){ [1, 2, 3] }
 
     should "map a given list to the data" do
       assert_that(Nm::Template.new.__map__(list).__data__).equals(list)
 
       exp = [
-        {"1" => 1},
-        {"2" => 2},
-        {"3" => 3},
+        { "1" => 1 },
+        { "2" => 2 },
+        { "3" => 3 },
       ]
       t = Nm::Template.new.__map__(list){ |item| __node__(item.to_s, item) }
       assert_that(t.__data__).equals(exp)
 
       exp = {
         "list" => [
-          {"1" => 1},
-          {"2" => 2},
-          {"3" => 3},
-        ]
+          { "1" => 1 },
+          { "2" => 2 },
+          { "3" => 3 },
+        ],
       }
       list_value = list
       t =
@@ -115,7 +117,7 @@ class Nm::Template
 
     should "complain if called after a `__node__` call" do
       t = Nm::Template.new.__node__("a", "Aye")
-      assert_that{ t.__map__([1,2,3]) }.raises(Nm::InvalidError)
+      assert_that{ t.__map__([1, 2, 3]) }.raises(Nm::InvalidError)
     end
   end
 
@@ -128,7 +130,7 @@ class Nm::Template
           "a" => "Aye",
           "b" => "Bee",
           "c" => "See",
-        }
+        },
       }
     end
     let(:list_template_name){ "list" }
@@ -163,30 +165,30 @@ class Nm::Template
       assert_that(t.r(obj_template_name).__data__).equals(obj)
     end
 
-    should "merge if call returns an obj and called after a `__node__` call" do
+    should "merge if call returns an obj and called after `__node__`" do
       t = Nm::Template.new(source)
       t.__node__("1", "One")
 
-      exp = {"1" => "One"}.merge(obj)
+      exp = { "1" => "One" }.merge(obj)
       assert_that(t.__render__(obj_template_name).__data__).equals(exp)
     end
 
-    should "complain if call returns an obj and called after a `__map__` call" do
+    should "complain if call returns an obj and called after `__map__`" do
       t = Nm::Template.new(source)
-      t.__map__([1,2,3])
+      t.__map__([1, 2, 3])
       assert_that{ t.__render__(obj_template_name).__data__ }
         .raises(Nm::InvalidError)
     end
 
-    should "concat if call returns a list and called after a `__map__` call" do
+    should "concat if call returns a list and called after `__map__`" do
       t = Nm::Template.new(source)
-      t.__map__([1,2,3])
+      t.__map__([1, 2, 3])
 
-      exp = [1,2,3].concat(list)
+      exp = [1, 2, 3].concat(list)
       assert_that(t.__render__(list_template_name).__data__).equals(exp)
     end
 
-    should "complain if call returns a list and called after a `__node__` call" do
+    should "complain if call returns a list and called after `__node__`" do
       t = Nm::Template.new(source)
       t.__node__("1", "One")
 
@@ -203,7 +205,7 @@ class Nm::Template
       {
         "a" => "Aye",
         "b" => "Bee",
-        "c" => "See"
+        "c" => "See",
       }
     end
     let(:partial_list_template_name){ "_list" }
@@ -232,30 +234,31 @@ class Nm::Template
       assert_that(t.p(partial_obj_template_name).__data__).equals(partial_obj)
     end
 
-    should "merge if call returns an obj and called after a `__node__` call" do
+    should "merge if call returns an obj and called after `__node__`" do
       t = Nm::Template.new(source)
       t.__node__("1", "One")
 
-      exp = {"1" => "One"}.merge(partial_obj)
+      exp = { "1" => "One" }.merge(partial_obj)
       assert_that(t.__partial__(partial_obj_template_name).__data__).equals(exp)
     end
 
-    should "complain if call returns an obj and called after a `__map__` call" do
+    should "complain if call returns an obj and called after `__map__`" do
       t = Nm::Template.new(source)
-      t.__map__([1,2,3])
+      t.__map__([1, 2, 3])
       assert_that{ t.__partial__(partial_obj_template_name).__data__ }
         .raises(Nm::InvalidError)
     end
 
-    should "merge if call returns a list and called after a `__map__` call" do
+    should "merge if call returns a list and called after `__map__`" do
       t = Nm::Template.new(source)
-      t.__map__([1,2,3])
+      t.__map__([1, 2, 3])
 
-      exp = [1,2,3].concat(partial_list)
-      assert_that(t.__partial__(partial_list_template_name).__data__).equals(exp)
+      exp = [1, 2, 3].concat(partial_list)
+      assert_that(t.__partial__(partial_list_template_name).__data__)
+        .equals(exp)
     end
 
-    should "complain if call returns a list and called after a `__node__` call" do
+    should "complain if call returns a list and called after `__node__`" do
       t = Nm::Template.new(source)
       t.__node__("1", "One")
 
@@ -273,8 +276,8 @@ class Nm::Template
         "obj" => {
           "a" => "Aye",
           "b" => "Bee",
-          "c" => "See"
-        }
+          "c" => "See",
+        },
       }
     end
     let(:list_source_file){ Factory.template_file("list.nm") }
@@ -282,7 +285,7 @@ class Nm::Template
       [
         { "1" => 1 },
         { "2" => 2 },
-        { "3" => 3 }
+        { "3" => 3 },
       ]
     end
 
@@ -303,7 +306,8 @@ class Nm::Template
     let(:no_exist_source_file){ Factory.template_file("does-not-exist.nm") }
 
     should "complain that the source does not exist" do
-      assert_that{ Nm::Template.new(no_exist_source_file) }.raises(ArgumentError)
+      assert_that{ Nm::Template.new(no_exist_source_file) }
+        .raises(ArgumentError)
     end
   end
 
@@ -314,7 +318,7 @@ class Nm::Template
       {
         "key" => "value",
         "node" => "A Node",
-        "map" => "A Map"
+        "map" => "A Map",
       }
     end
 

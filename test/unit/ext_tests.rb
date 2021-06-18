@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "assert"
 require "nm/ext"
 
@@ -17,11 +19,11 @@ module Nm::Ext
     let(:call_name){ Factory.string }
 
     should "be added to ::Hash" do
-      assert_that(::Hash.new).responds_to(:__nm_add_call_data__)
+      assert_that({}).responds_to(:__nm_add_call_data__)
     end
 
     should "be added to ::Array" do
-      assert_that(::Array.new).responds_to(:__nm_add_call_data__)
+      assert_that([]).responds_to(:__nm_add_call_data__)
     end
 
     should "be added to nil" do
@@ -32,7 +34,7 @@ module Nm::Ext
   class HashAddCallDataTests < AddCallDataTests
     desc "on ::Hash"
 
-    let(:h){ {1 => "1"} }
+    let(:h){ { 1 => "1" } }
 
     should "merge and return hash and nil data" do
       add = { 2 => "2" }

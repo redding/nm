@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "assert/factory"
 require_relative "./template"
 
@@ -8,7 +10,7 @@ class NmBench::SlideshowTemplate < ::NmBench::Template
 
   def initialize
     @name = "slideshow"
-    @locals = { :view => View.new }
+    @locals = { view: View.new }
   end
 
   class View

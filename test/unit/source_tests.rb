@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "assert"
 require "nm/source"
 
@@ -29,8 +31,8 @@ class Nm::Source
       assert_that(subject.ext).is_nil
 
       ext = Factory.string
-      source = unit_class.new(root, :ext => ext)
-      assert_that(source.ext).equals( ".#{ext}")
+      source = unit_class.new(root, ext: ext)
+      assert_that(source.ext).equals(".#{ext}")
     end
 
     should "not cache templates by default" do
@@ -38,7 +40,7 @@ class Nm::Source
     end
 
     should "cache templates if the :cache opt is `true`" do
-      source = unit_class.new(root, :cache => true)
+      source = unit_class.new(root, cache: true)
       assert_that(source.cache).is_a(Hash)
     end
 
@@ -48,7 +50,7 @@ class Nm::Source
 
     should "optionally take and apply default locals to its template class" do
       local_name, local_val = [Factory.string, Factory.string]
-      source = unit_class.new(root, :locals => {local_name => local_val})
+      source = unit_class.new(root, locals: { local_name => local_val })
       template = source.template_class.new
 
       assert_that(template).responds_to(local_name)
@@ -70,7 +72,7 @@ class Nm::Source
     end
 
     should "cache template source by file path if enabled" do
-      source = unit_class.new(root, :cache => true)
+      source = unit_class.new(root, cache: true)
 
       file_data = File.read(file_path)
       assert_that(source.data(file_path)).equals(file_data)
@@ -86,9 +88,9 @@ class Nm::Source
     let(:file_path) do
       Dir.glob("#{Factory.template_file(template_name)}*").first
     end
-    let(:file_locals){ {"key" => "a-value"} }
+    let(:file_locals){ { "key" => "a-value" } }
 
-    should "render a template for the given template name and return its data" do
+    should "render a template for the given name and return its data" do
       assert_that(subject.render(template_name, file_locals))
         .equals(Nm::Template.new(subject, file_path, file_locals).__data__)
     end
@@ -99,26 +101,27 @@ class Nm::Source
     end
 
     should "only render templates with the matching ext if one is specified" do
-      source = unit_class.new(root, :ext => "nm")
+      source = unit_class.new(root, ext: "nm")
       file_path = Factory.template_file("locals.nm")
       ["locals", "locals.nm"].each do |name|
         assert_that(source.render(name, file_locals))
           .equals(Nm::Template.new(source, file_path, file_locals).__data__)
       end
 
-      source = unit_class.new(root, :ext => "inem")
+      source = unit_class.new(root, ext: "inem")
       file_path = Factory.template_file("locals_alt.data.inem")
-      ["locals", "locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
-        assert_that(source.render(name, file_locals))
-          .equals(Nm::Template.new(source, file_path, file_locals).__data__)
-      end
+      ["locals", "locals_alt", "locals_alt.data", "locals_alt.data.inem"]
+        .each do |name|
+          assert_that(source.render(name, file_locals))
+            .equals(Nm::Template.new(source, file_path, file_locals).__data__)
+        end
 
-      source = unit_class.new(root, :ext => "nm")
+      source = unit_class.new(root, ext: "nm")
       ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_that{ source.render(name, file_locals) }.raises(ArgumentError)
       end
 
-      source = unit_class.new(root, :ext => "data")
+      source = unit_class.new(root, ext: "data")
       ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_that{ source.render(name, file_locals) }.raises(ArgumentError)
       end

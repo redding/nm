@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "./runner"
 
 module NmBench; end
@@ -16,8 +18,8 @@ class NmBench::Logger
     end
   end
 
-  def respond_to?(*args)
-    @ios.first.respond_to?(args.first.to_s) ? true : super
+  def respond_to_missing?(*args)
+    @ios.first.respond_to_missing?(args.first.to_s) ? true : super
   end
 
   def run_template(runner, name, *args)

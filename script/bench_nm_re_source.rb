@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # $ bundle exec ruby script/bench_nm_re_source.rb
 
 # require pry for debugging (`binding.pry`)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # $ bundle exec ruby script/bench_all.rb
 
 require_relative "./bench_rabl"

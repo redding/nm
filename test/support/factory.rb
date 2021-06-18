@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "assert/factory"
 
 module Factory
@@ -10,5 +12,4 @@ module Factory
   def self.template_file(name)
     TEMPLATE_ROOT.join(name).to_s
   end
-
 end
