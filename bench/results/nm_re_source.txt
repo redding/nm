@@ -2,29 +2,26 @@ Nm (re-source) slideshow: 1 times
 ---------------------------------
 whysoslow? ..
 
-mem @ start             425 MB                  ??
-mem @ finish            426 MB                  [31m+   1 MB,   0%[0m
+mem @ start             47 MB                   ??
+mem @ finish            47 MB                   [32m-   0 MB,   0%[0m
 
          user     system   total    real
-time     0.0 ms   0.0 ms   0.0 ms   8.699 ms
-
+time     0.977 ms 0.265 ms 1.242 ms 1.28 ms
 Nm (re-source) slideshow: 10 times
 ----------------------------------
 whysoslow? ..
 
-mem @ start             252 MB                  ??
-mem @ finish            256 MB                  [31m+   5 MB,   2%[0m
+mem @ start             47 MB                   ??
+mem @ finish            47 MB                   [32m-   0 MB,   0%[0m
 
-          user      system    total     real
-time      30.0 ms   10.0 ms   40.0 ms   41.577 ms
-
+                     user                 system               total                real
+time                 7.482 ms             1.367 ms             8.848999999999998 ms 8.844 ms
 Nm (re-source) slideshow: 100 times
 -----------------------------------
 whysoslow? ..
 
-mem @ start             253 MB                  ??
-mem @ finish            401 MB                  [31m+ 148 MB,  58%[0m
+mem @ start             47 MB                   ??
+mem @ finish            56 MB                   [31m+  10 MB,  20%[0m
 
-          user      system    total     real
-time      370.0 ms  70.0 ms   440.0 ms  440.59 ms
-
+                     user                 system               total                real
+time                 71.04199999999999 ms 14.057 ms            85.09899999999999 ms 85.18599999999999 ms

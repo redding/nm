@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 # $ bundle exec ruby script/bench_all.rb
 
-require 'script/bench_rabl'
-require 'script/bench_nm'
-require 'script/bench_nm_partials'
-require 'script/bench_nm_re_source'
+require_relative "./bench_rabl"
+require_relative "./bench_nm"
+require_relative "./bench_nm_partials"
+require_relative "./bench_nm_re_source"

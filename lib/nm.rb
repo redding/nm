@@ -1,4 +1,7 @@
-require "nm/version"
-require 'nm/source'
+# frozen_string_literal: true
 
-module Nm; end
+require "nm/version"
+require "nm/source"
+
+module Nm
+end

@@ -1,16 +1,14 @@
-module NmBench
+# frozen_string_literal: true
 
-  class Template
+module NmBench; end
 
-    attr_reader :name, :locals
+class NmBench::Template
+  attr_reader :name, :locals
 
-    TEMPLATES = {}
-    require 'bench/slideshow'
+  TEMPLATES = {}
+  require_relative "./slideshow"
 
-    def self.find(name)
-      TEMPLATES[name].new
-    end
-
+  def self.find(name)
+    TEMPLATES[name].new
   end
-
 end
