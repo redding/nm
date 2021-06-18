@@ -1,4 +1,5 @@
 require "nm/version"
-require 'nm/source'
+require "nm/source"
 
-module Nm; end
+module Nm
+end

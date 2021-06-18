@@ -1,7 +1,9 @@
 source "https://rubygems.org"
 
+ruby "~> 2.5"
+
 gemspec
 
-gem 'pry', "~> 0.9.0"
+gem "pry"
 gem "whysoslow"
-gem 'rabl'
+gem "rabl"

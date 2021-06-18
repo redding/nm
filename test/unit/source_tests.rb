@@ -1,17 +1,15 @@
-require 'assert'
-require 'nm/source'
+require "assert"
+require "nm/source"
 
-require 'nm/template'
+require "nm/template"
 
 class Nm::Source
-
   class UnitTests < Assert::Context
     desc "Nm::Source"
     setup do
       @source_class = Nm::Source
     end
     subject{ @source_class }
-
   end
 
   class InitTests < UnitTests
@@ -60,13 +58,12 @@ class Nm::Source
       assert_responds_to local_name, template
       assert_equal local_val, template.send(local_name)
     end
-
   end
 
   class DataTests < InitTests
     desc "`data` method"
     setup do
-      @file_path = Factory.template_file('obj.nm')
+      @file_path = Factory.template_file("obj.nm")
     end
 
     should "read the contents of a given file path" do
@@ -86,14 +83,13 @@ class Nm::Source
       assert_equal [@file_path], source.cache.keys
       assert_equal exp, source.cache[@file_path]
     end
-
   end
 
   class RenderTests < InitTests
     desc "`render` method"
     setup do
-      @template_name = ['locals', 'locals_alt'].sample
-      @file_locals = { 'key' => 'a-value' }
+      @template_name = ["locals", "locals_alt"].sample
+      @file_locals = { "key" => "a-value" }
       @file_path = Dir.glob("#{Factory.template_file(@template_name)}*").first
     end
 
@@ -108,31 +104,30 @@ class Nm::Source
     end
 
     should "only render templates with the matching ext if one is specified" do
-      source = @source_class.new(@root, :ext => 'nm')
-      file_path = Factory.template_file('locals.nm')
+      source = @source_class.new(@root, :ext => "nm")
+      file_path = Factory.template_file("locals.nm")
       exp = Nm::Template.new(source, file_path, @file_locals).__data__
-      ['locals', 'locals.nm'].each do |name|
+      ["locals", "locals.nm"].each do |name|
         assert_equal exp, source.render(name, @file_locals)
       end
 
-      source = @source_class.new(@root, :ext => 'inem')
-      file_path = Factory.template_file('locals_alt.data.inem')
+      source = @source_class.new(@root, :ext => "inem")
+      file_path = Factory.template_file("locals_alt.data.inem")
       exp = Nm::Template.new(source, file_path, @file_locals).__data__
-      ['locals', 'locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+      ["locals", "locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_equal exp, source.render(name, @file_locals)
       end
 
-      source = @source_class.new(@root, :ext => 'nm')
-      ['locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+      source = @source_class.new(@root, :ext => "nm")
+      ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_raises(ArgumentError){ source.render(name, @file_locals) }
       end
 
-      source = @source_class.new(@root, :ext => 'data')
-      ['locals_alt', 'locals_alt.data', 'locals_alt.data.inem'].each do |name|
+      source = @source_class.new(@root, :ext => "data")
+      ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_raises(ArgumentError){ source.render(name, @file_locals) }
       end
     end
-
   end
 
   class DefaultSource < UnitTests
@@ -147,9 +142,7 @@ class Nm::Source
     end
 
     should "use `/` as its root" do
-      assert_equal '/', subject.root.to_s
+      assert_equal "/", subject.root.to_s
     end
-
   end
-
 end

@@ -1,4 +1,4 @@
 _map (1..1) do
-  n     'node local value', node
-  _node 'map local value',  map
+  n     "node local value", node
+  _node "map local value",  map
 end

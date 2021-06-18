@@ -1,15 +1,13 @@
-require 'assert'
-require 'nm/template'
+require "assert"
+require "nm/template"
 
-require 'nm/ext'
-require 'nm/source'
+require "nm/ext"
+require "nm/source"
 
 class Nm::Template
-
   class UnitTests < Assert::Context
     desc "Nm::Template"
     subject{ Nm::Template }
-
   end
 
   class InitTests < UnitTests
@@ -31,49 +29,47 @@ class Nm::Template
 
     should "return itself when its markup methods are called" do
       t = Nm::Template.new
-      assert_equal t, t.__node__('key', 'value')
+      assert_equal t, t.__node__("key", "value")
 
       t = Nm::Template.new
       assert_equal t, t.__map__([], &Proc.new{})
 
       t = Nm::Template.new
-      assert_equal t, t.__render__(Factory.template_file('obj'))
+      assert_equal t, t.__render__(Factory.template_file("obj"))
 
       t = Nm::Template.new
-      assert_equal t, t.__partial__(Factory.template_file('obj'))
+      assert_equal t, t.__partial__(Factory.template_file("obj"))
     end
-
   end
 
   class NodeMethodTests < UnitTests
     desc "`__node__` method"
 
     should "add key-value pairs at any level" do
-      exp = {'a' => 'Aye'}
-      assert_equal exp, Nm::Template.new.__node__('a', 'Aye').__data__
+      exp = {"a" => "Aye"}
+      assert_equal exp, Nm::Template.new.__node__("a", "Aye").__data__
 
       exp = {
-        'nested' => {'a' => 'Aye'}
+        "nested" => {"a" => "Aye"}
       }
-      t = Nm::Template.new.__node__('nested'){ __node__('a', 'Aye') }
+      t = Nm::Template.new.__node__("nested"){ __node__("a", "Aye") }
       assert_equal exp, t.__data__
     end
 
     should "be aliased as `node`, `_node` and `n`" do
-      exp = {'a' => 'Aye'}
-      assert_equal exp, Nm::Template.new.__node__('a', 'Aye').__data__
-      assert_equal exp, Nm::Template.new.node('a', 'Aye').__data__
-      assert_equal exp, Nm::Template.new._node('a', 'Aye').__data__
-      assert_equal exp, Nm::Template.new.n('a', 'Aye').__data__
+      exp = {"a" => "Aye"}
+      assert_equal exp, Nm::Template.new.__node__("a", "Aye").__data__
+      assert_equal exp, Nm::Template.new.node("a", "Aye").__data__
+      assert_equal exp, Nm::Template.new._node("a", "Aye").__data__
+      assert_equal exp, Nm::Template.new.n("a", "Aye").__data__
     end
 
     should "complain if called after a `__map__` call" do
       t = Nm::Template.new.__map__([1,2,3])
       assert_raises Nm::InvalidError do
-        t.__node__('a', 'Aye')
+        t.__node__("a", "Aye")
       end
     end
-
   end
 
   class MapMethodTests < UnitTests
@@ -87,22 +83,22 @@ class Nm::Template
       assert_equal exp, Nm::Template.new.__map__(@list).__data__
 
       exp = [
-        {'1' => 1},
-        {'2' => 2},
-        {'3' => 3},
+        {"1" => 1},
+        {"2" => 2},
+        {"3" => 3},
       ]
       t = Nm::Template.new.__map__(@list){ |item| __node__(item.to_s, item) }
       assert_equal exp, t.__data__
 
       exp = {
-        'list' => [
-          {'1' => 1},
-          {'2' => 2},
-          {'3' => 3},
+        "list" => [
+          {"1" => 1},
+          {"2" => 2},
+          {"3" => 3},
         ]
       }
       list = @list
-      t = Nm::Template.new.__node__('list') do
+      t = Nm::Template.new.__node__("list") do
         __map__(list){ |item| __node__(item.to_s, item) }
       end
       assert_equal exp, t.__data__
@@ -118,19 +114,18 @@ class Nm::Template
 
     should "complain if given a list that doesn't respond to `.map`" do
       val = 123
-      assert_not_responds_to 'map', val
+      assert_not_responds_to "map", val
       assert_raises ArgumentError do
         Nm::Template.new.__map__(val)
       end
     end
 
     should "complain if called after a `__node__` call" do
-      t = Nm::Template.new.__node__('a', 'Aye')
+      t = Nm::Template.new.__node__("a", "Aye")
       assert_raises Nm::InvalidError do
         t.__map__([1,2,3])
       end
     end
-
   end
 
   class RenderTests < InitTests
@@ -139,21 +134,20 @@ class Nm::Template
 
       @obj_template_name = "obj"
       @obj = {
-        'obj' => {
-          'a' => 'Aye',
-          'b' => 'Bee',
-          'c' => 'See'
+        "obj" => {
+          "a" => "Aye",
+          "b" => "Bee",
+          "c" => "See"
         }
       }
 
       @list_template_name = "list"
       @list = [
-        { '1' => 1 },
-        { '2' => 2 },
-        { '3' => 3 }
+        { "1" => 1 },
+        { "2" => 2 },
+        { "3" => 3 }
       ]
     end
-
   end
 
   class RenderMethodTests < RenderTests
@@ -180,9 +174,9 @@ class Nm::Template
 
     should "merge if call returns an obj and called after a `__node__` call" do
       t = Nm::Template.new(@source)
-      t.__node__('1', 'One')
+      t.__node__("1", "One")
 
-      exp = {'1' => 'One'}.merge(@obj)
+      exp = {"1" => "One"}.merge(@obj)
       assert_equal exp, t.__render__(@obj_template_name).__data__
     end
 
@@ -204,13 +198,12 @@ class Nm::Template
 
     should "complain if call returns a list and called after a `__node__` call" do
       t = Nm::Template.new(@source)
-      t.__node__('1', 'One')
+      t.__node__("1", "One")
 
       assert_raises Nm::InvalidError do
         t.__render__(@list_template_name).__data__
       end
     end
-
   end
 
   class PartialMethodTests < RenderTests
@@ -218,9 +211,9 @@ class Nm::Template
     setup do
       @partial_obj_template_name = "_obj"
       @partial_obj = {
-        'a' => 'Aye',
-        'b' => 'Bee',
-        'c' => 'See'
+        "a" => "Aye",
+        "b" => "Bee",
+        "c" => "See"
       }
       @partial_list_template_name = "_list"
       @partial_list = @list
@@ -247,9 +240,9 @@ class Nm::Template
 
     should "merge if call returns an obj and called after a `__node__` call" do
       t = Nm::Template.new(@source)
-      t.__node__('1', 'One')
+      t.__node__("1", "One")
 
-      exp = {'1' => 'One'}.merge(@partial_obj)
+      exp = {"1" => "One"}.merge(@partial_obj)
       assert_equal exp, t.__partial__(@partial_obj_template_name).__data__
     end
 
@@ -271,32 +264,31 @@ class Nm::Template
 
     should "complain if call returns a list and called after a `__node__` call" do
       t = Nm::Template.new(@source)
-      t.__node__('1', 'One')
+      t.__node__("1", "One")
 
       assert_raises Nm::InvalidError do
         t.__partial__(@partial_list_template_name).__data__
       end
     end
-
   end
 
   class SourceFileTests < UnitTests
     desc "when init given a source file"
     setup do
-      @obj_source_file = Factory.template_file('obj.nm')
+      @obj_source_file = Factory.template_file("obj.nm")
       @exp_obj = {
-        'obj' => {
-          'a' => 'Aye',
-          'b' => 'Bee',
-          'c' => 'See'
+        "obj" => {
+          "a" => "Aye",
+          "b" => "Bee",
+          "c" => "See"
         }
       }
 
-      @list_source_file = Factory.template_file('list.nm')
+      @list_source_file = Factory.template_file("list.nm")
       @exp_list = [
-        { '1' => 1 },
-        { '2' => 2 },
-        { '3' => 3 }
+        { "1" => 1 },
+        { "2" => 2 },
+        { "3" => 3 }
       ]
     end
 
@@ -309,13 +301,12 @@ class Nm::Template
       assert_equal @exp_obj,  Nm::Template.new(@obj_source_file,  {}).__data__
       assert_equal @exp_list, Nm::Template.new(@list_source_file, {}).__data__
     end
-
   end
 
   class NoExistSourceFileTests < UnitTests
     desc "when init given a source file that does not exist"
     setup do
-      @no_exist_source_file = Factory.template_file('does-not-exist.nm')
+      @no_exist_source_file = Factory.template_file("does-not-exist.nm")
     end
 
     should "complain that the source does not exist" do
@@ -323,35 +314,32 @@ class Nm::Template
         Nm::Template.new(@no_exist_source_file)
       end
     end
-
   end
 
   class LocalsTests < UnitTests
     desc "when init with locals"
     setup do
       @locals = {
-        'key' => 'value',
-        'node' => 'A Node',
-        'map' => 'A Map'
+        "key" => "value",
+        "node" => "A Node",
+        "map" => "A Map"
       }
     end
 
     should "expose the local as a reader method on the template" do
       t = Nm::Template.new
-      assert_not_responds_to 'key', t
+      assert_not_responds_to "key", t
 
       t = Nm::Template.new(@locals)
-      assert_equal 'value', t.key
+      assert_equal "value", t.key
     end
 
     should "not interfere with method aliases" do
-      d = Nm::Template.new(Factory.template_file('aliases.nm'), @locals).__data__
+      d = Nm::Template.new(Factory.template_file("aliases.nm"), @locals).__data__
       assert_kind_of ::Array, d
       assert_equal 1, d.size
-      assert_equal 'A Node', d.first['node local value']
-      assert_equal 'A Map',  d.first['map local value']
+      assert_equal "A Node", d.first["node local value"]
+      assert_equal "A Map",  d.first["map local value"]
     end
-
   end
-
 end

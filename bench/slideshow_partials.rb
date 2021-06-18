@@ -1,17 +1,13 @@
-require 'assert/factory'
-require 'bench/slideshow'
+require "assert/factory"
+require_relative "./slideshow"
 
-module NmBench
+module NmBench; end
 
-  class SlideshowPartialsTemplate < SlideshowTemplate
+class NmBench::SlideshowPartialsTemplate < ::NmBench::SlideshowTemplate
+  TEMPLATES[:slideshow_partials] = self
 
-    TEMPLATES[:slideshow_partials] = self
-
-    def initialize
-      super
-      @name = 'slideshow_partials'
-    end
-
+  def initialize
+    super
+    @name = "slideshow_partials"
   end
-
 end
