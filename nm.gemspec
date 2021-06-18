@@ -23,5 +23,5 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = "~> 2.5"
 
-  gem.add_development_dependency("assert", ["~> 2.16.3"])
+  gem.add_development_dependency("assert", ["~> 2.19.6"])
 end

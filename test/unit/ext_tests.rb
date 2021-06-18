@@ -7,81 +7,76 @@ module Nm::Ext
     subject{ Nm }
 
     should "define and invalid runtime error" do
-      assert_kind_of ::RuntimeError, subject::InvalidError.new
+      assert_that(subject::InvalidError.new).is_a(RuntimeError)
     end
   end
 
   class AddCallDataTests < UnitTests
     desc "__nm_add_call_data__"
-    setup do
-      @call_name = Factory.string
-    end
+
+    let(:call_name){ Factory.string }
 
     should "be added to ::Hash" do
-      assert_responds_to :__nm_add_call_data__, ::Hash.new
+      assert_that(::Hash.new).responds_to(:__nm_add_call_data__)
     end
 
     should "be added to ::Array" do
-      assert_responds_to :__nm_add_call_data__, ::Array.new
+      assert_that(::Array.new).responds_to(:__nm_add_call_data__)
     end
 
     should "be added to nil" do
-      assert_responds_to :__nm_add_call_data__, nil
+      assert_that(nil).responds_to(:__nm_add_call_data__)
     end
   end
 
   class HashAddCallDataTests < AddCallDataTests
     desc "on ::Hash"
-    setup do
-      @h = { 1 => "1" }
-    end
+
+    let(:h){ {1 => "1"} }
 
     should "merge and return hash and nil data" do
       add = { 2 => "2" }
-      assert_equal @h.merge(add), @h.__nm_add_call_data__(@call_name, add)
-      assert_equal @h, @h.__nm_add_call_data__(@call_name, nil)
+      assert_that(h.__nm_add_call_data__(call_name, add)).equals(h.merge(add))
+      assert_that(h.__nm_add_call_data__(call_name, nil)).equals(h)
     end
 
     should "complain if adding Array data" do
       add = []
-      assert_raises Nm::InvalidError do
-        @h.__nm_add_call_data__(@call_name, add)
-      end
+      assert_that{ h.__nm_add_call_data__(call_name, add) }
+        .raises(Nm::InvalidError)
     end
   end
 
   class ArrayAddCallDataTests < AddCallDataTests
     desc "on ::Array"
-    setup do
-      @a = [1, 2]
-    end
+
+    let(:a){ [1, 2] }
 
     should "concat and return array and nil data" do
       add = [3, 4]
-      assert_equal @a.concat(add), @a.__nm_add_call_data__(@call_name, add)
-      assert_equal @a, @a.__nm_add_call_data__(@call_name, nil)
+      assert_that(a.__nm_add_call_data__(call_name, add)).equals(a.concat(add))
+      assert_that(a.__nm_add_call_data__(call_name, nil)).equals(a)
     end
 
     should "complain if adding Hash data" do
       add = {}
-      assert_raises Nm::InvalidError do
-        @a.__nm_add_call_data__(@call_name, add)
-      end
+      assert_that{ a.__nm_add_call_data__(call_name, add) }
+        .raises(Nm::InvalidError)
     end
   end
 
   class NilAddCallDataTests < AddCallDataTests
     desc "on nil"
-    setup do
-      @n = nil
-    end
+
+    let(:n){ nil }
 
     should "return any given data" do
       add_hash = { 1 => "1" }
       add_array = [3, 4]
-      assert_equal add_hash,  @n.__nm_add_call_data__(@call_name, add_hash)
-      assert_equal add_array, @n.__nm_add_call_data__(@call_name, add_array)
-      assert_equal @n, @n.__nm_add_call_data__(@call_name, nil)
+      assert_that(n.__nm_add_call_data__(call_name, add_hash)).equals(add_hash)
+      assert_that(n.__nm_add_call_data__(call_name, add_array))
+        .equals(add_array)
+      assert_that(n.__nm_add_call_data__(call_name, nil)).equals(n)
     end
   end
 end
