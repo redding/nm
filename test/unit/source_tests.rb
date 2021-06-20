@@ -21,7 +21,7 @@ class Nm::Source
     let(:source){ unit_class.new(root) }
 
     should have_readers :root, :extension, :cache, :template_class
-    should have_imeths :data, :render, :partial
+    should have_imeths :data, :render, :partial, :file_path!
 
     should "know its root" do
       assert_that(subject.root.to_s).equals(root)
@@ -125,6 +125,23 @@ class Nm::Source
       ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_that{ source.render(name, file_locals) }.raises(ArgumentError)
       end
+    end
+  end
+
+  class FilePathBangTests < InitTests
+    desc "`file_path!` method"
+
+    let(:template_name){ ["locals", "locals_alt"].sample }
+    let(:file_path) do
+      Dir.glob("#{Factory.template_file(template_name)}*").first
+    end
+
+    should "return the file path for the given template name if it exists" do
+      assert_that(subject.file_path!(template_name)).equals(file_path)
+    end
+
+    should "complain if the given template name does not exist" do
+      assert_that{ subject.file_path!(Factory.path) }.raises(ArgumentError)
     end
   end
 
