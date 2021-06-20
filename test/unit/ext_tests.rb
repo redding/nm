@@ -14,20 +14,18 @@ module Nm::Ext
   end
 
   class AddCallDataTests < UnitTests
-    desc "__nm_add_call_data__"
-
-    let(:call_name){ Factory.string }
+    desc "__nm_add_partial_data__"
 
     should "be added to ::Hash" do
-      assert_that({}).responds_to(:__nm_add_call_data__)
+      assert_that({}).responds_to(:__nm_add_partial_data__)
     end
 
     should "be added to ::Array" do
-      assert_that([]).responds_to(:__nm_add_call_data__)
+      assert_that([]).responds_to(:__nm_add_partial_data__)
     end
 
     should "be added to nil" do
-      assert_that(nil).responds_to(:__nm_add_call_data__)
+      assert_that(nil).responds_to(:__nm_add_partial_data__)
     end
   end
 
@@ -38,14 +36,13 @@ module Nm::Ext
 
     should "merge and return hash and nil data" do
       add = { 2 => "2" }
-      assert_that(h.__nm_add_call_data__(call_name, add)).equals(h.merge(add))
-      assert_that(h.__nm_add_call_data__(call_name, nil)).equals(h)
+      assert_that(h.__nm_add_partial_data__(add)).equals(h.merge(add))
+      assert_that(h.__nm_add_partial_data__(nil)).equals(h)
     end
 
     should "complain if adding Array data" do
       add = []
-      assert_that{ h.__nm_add_call_data__(call_name, add) }
-        .raises(Nm::InvalidError)
+      assert_that{ h.__nm_add_partial_data__(add) }.raises(Nm::InvalidError)
     end
   end
 
@@ -56,14 +53,13 @@ module Nm::Ext
 
     should "concat and return array and nil data" do
       add = [3, 4]
-      assert_that(a.__nm_add_call_data__(call_name, add)).equals(a.concat(add))
-      assert_that(a.__nm_add_call_data__(call_name, nil)).equals(a)
+      assert_that(a.__nm_add_partial_data__(add)).equals(a.concat(add))
+      assert_that(a.__nm_add_partial_data__(nil)).equals(a)
     end
 
     should "complain if adding Hash data" do
       add = {}
-      assert_that{ a.__nm_add_call_data__(call_name, add) }
-        .raises(Nm::InvalidError)
+      assert_that{ a.__nm_add_partial_data__(add) }.raises(Nm::InvalidError)
     end
   end
 
@@ -75,10 +71,9 @@ module Nm::Ext
     should "return any given data" do
       add_hash = { 1 => "1" }
       add_array = [3, 4]
-      assert_that(n.__nm_add_call_data__(call_name, add_hash)).equals(add_hash)
-      assert_that(n.__nm_add_call_data__(call_name, add_array))
-        .equals(add_array)
-      assert_that(n.__nm_add_call_data__(call_name, nil)).equals(n)
+      assert_that(n.__nm_add_partial_data__(add_hash)).equals(add_hash)
+      assert_that(n.__nm_add_partial_data__(add_array)).equals(add_array)
+      assert_that(n.__nm_add_partial_data__(nil)).equals(n)
     end
   end
 end

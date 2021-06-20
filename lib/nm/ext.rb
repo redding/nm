@@ -6,19 +6,19 @@ module Nm
 end
 
 class ::Hash
-  def __nm_add_call_data__(call_name, data)
-    raise Nm::InvalidError, "invalid `#{call_name}` call" if data.is_a?(::Array)
+  def __nm_add_partial_data__(data)
+    raise Nm::InvalidError, "invalid partial call" if data.is_a?(::Array)
     merge(data || {})
   end
 end
 
 class ::Array
-  def __nm_add_call_data__(call_name, data)
-    raise Nm::InvalidError, "invalid `#{call_name}` call" if data.is_a?(::Hash)
+  def __nm_add_partial_data__(data)
+    raise Nm::InvalidError, "invalid partial call" if data.is_a?(::Hash)
     concat(data || [])
   end
 end
 
-def nil.__nm_add_call_data__(_call_name, data)
+def nil.__nm_add_partial_data__(data)
   data
 end
