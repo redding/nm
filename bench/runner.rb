@@ -69,7 +69,7 @@ class NmBench::NmRunner < NmBench::Runner
     template = NmBench::Template.find(template_name)
     source = Nm::Source.new(File.expand_path("..", __FILE__), cache: true)
     super(printer_io, "Nm #{template.name}", num_times) do
-      source.render(template.name, template.locals)
+      source.render(template.name, locals: template.locals)
     end
   end
 end
@@ -81,7 +81,7 @@ class NmBench::NmReSourceRunner < NmBench::Runner
     template = NmBench::Template.find(template_name)
     super(printer_io, "Nm (re-source) #{template.name}", num_times) do
       source = Nm::Source.new(File.expand_path("..", __FILE__), cache: true)
-      source.render(template.name, template.locals)
+      source.render(template.name, locals: template.locals)
     end
   end
 end

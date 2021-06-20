@@ -1,4 +1,7 @@
 _map (1..1) do
-  n     "node local value", node
-  _node "map local value",  map
+  n        "node local value",     node
+  _node    "map local value",      map
+  __node__ "context method value", helper_method1
+  __node__ "context local value",  key1
+  __node__ "render local value",   key2
 end

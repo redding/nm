@@ -30,8 +30,10 @@ require "nm"
 source = Nm::Source.new("/path/to/views")
 source.render(
   "slideshow.json",
-  start_slide: 1,
-  slides: [ ... ] #=> list of slide objects 1, 2 and 3
+  locals: {
+    start_slide: 1,
+    slides: [ ... ] #=> list of slide objects 1, 2 and 3
+  }
 )
 ```
 

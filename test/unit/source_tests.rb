@@ -3,7 +3,7 @@
 require "assert"
 require "nm/source"
 
-require "nm/template"
+require "nm/context"
 
 class Nm::Source
   class UnitTests < Assert::Context
@@ -20,41 +20,22 @@ class Nm::Source
     let(:root){ Factory.template_root }
     let(:source){ unit_class.new(root) }
 
-    should have_readers :root, :extension, :cache, :template_class
-    should have_imeths :data, :render, :partial, :file_path!
+    should have_readers :root, :extension, :cache, :locals
+    should have_imeths :data, :render, :file_path!
 
-    should "know its root" do
+    should "know its attributes" do
       assert_that(subject.root.to_s).equals(root)
-    end
-
-    should "know its extension for looking up source files" do
       assert_that(subject.extension).is_nil
+      assert_that(subject.cache).is_a(unit_class::NullCache)
+      assert_that(subject.locals).equals({})
 
       extension = Factory.string
-      source = unit_class.new(root, extension: extension)
+      locals = { key: "value" }
+      source =
+        unit_class.new(root, extension: extension, cache: true, locals: locals)
       assert_that(source.extension).equals(".#{extension}")
-    end
-
-    should "not cache templates by default" do
-      assert_that(subject.cache).is_a(unit_class::NullCache)
-    end
-
-    should "cache templates if the :cache opt is `true`" do
-      source = unit_class.new(root, cache: true)
       assert_that(source.cache).is_a(Hash)
-    end
-
-    should "know its template class" do
-      assert_that(subject.template_class < Nm::Template).is_true
-    end
-
-    should "optionally take and apply default locals to its template class" do
-      local_name, local_val = [Factory.string, Factory.string]
-      source = unit_class.new(root, locals: { local_name => local_val })
-      template = source.template_class.new
-
-      assert_that(template).responds_to(local_name)
-      assert_that(template.send(local_name)).equals(local_val)
+      assert_that(source.locals).equals(locals)
     end
   end
 
@@ -84,6 +65,7 @@ class Nm::Source
   class RenderTests < InitTests
     desc "`render` method"
 
+    let(:custom_context){ Class.new.new }
     let(:template_name){ ["locals", "locals_alt"].sample }
     let(:file_path) do
       Dir.glob("#{Factory.template_file(template_name)}*").first
@@ -91,29 +73,38 @@ class Nm::Source
     let(:file_locals){ { "key" => "a-value" } }
 
     should "render a template for the given name and return its data" do
-      assert_that(subject.render(template_name, file_locals))
-        .equals(Nm::Template.new(subject, file_path, file_locals).__data__)
+      assert_that(subject.render(template_name, locals: file_locals))
+        .equals(
+          Nm::Context
+            .new(Nm.default_context, source: subject, locals: subject.locals)
+            .render(template_name, file_locals),
+        )
     end
 
-    should "alias `render` as `partial`" do
-      assert_that(subject.partial(template_name, file_locals))
-        .equals(subject.render(template_name, file_locals))
-    end
-
-    should "only render templates with the matching extension if one is specified" do
+    should "only render templates with the matching extension if specified" do
       source = unit_class.new(root, extension: "nm")
-      file_path = Factory.template_file("locals.nm")
       ["locals", "locals.nm"].each do |name|
-        assert_that(source.render(name, file_locals))
-          .equals(Nm::Template.new(source, file_path, file_locals).__data__)
+        assert_that(subject.render(name, locals: file_locals))
+          .equals(
+            Nm::Context
+              .new(Nm.default_context, source: subject, locals: subject.locals)
+              .render(name, file_locals),
+          )
       end
 
       source = unit_class.new(root, extension: "inem")
-      file_path = Factory.template_file("locals_alt.data.inem")
       ["locals", "locals_alt", "locals_alt.data", "locals_alt.data.inem"]
         .each do |name|
-          assert_that(source.render(name, file_locals))
-            .equals(Nm::Template.new(source, file_path, file_locals).__data__)
+          assert_that(subject.render(name, locals: file_locals))
+            .equals(
+              Nm::Context
+                .new(
+                  Nm.default_context,
+                  source: subject,
+                  locals: subject.locals,
+                )
+                .render(name, file_locals),
+            )
         end
 
       source = unit_class.new(root, extension: "nm")
@@ -142,21 +133,6 @@ class Nm::Source
 
     should "complain if the given template name does not exist" do
       assert_that{ subject.file_path!(Factory.path) }.raises(ArgumentError)
-    end
-  end
-
-  class DefaultSource < UnitTests
-    desc "DefaultSource"
-    subject{ source }
-
-    let(:source){ Nm::DefaultSource.new }
-
-    should "be a Source" do
-      assert_that(subject).is_a(unit_class)
-    end
-
-    should "use `/` as its root" do
-      assert_that(subject.root.to_s).equals("/")
     end
   end
 end

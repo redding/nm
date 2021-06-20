@@ -1,23 +1,18 @@
 # frozen_string_literal: true
 
 require "pathname"
-require "nm/template"
+require "nm/context"
 
 module Nm; end
 
 class Nm::Source
-  attr_reader :root, :extension, :cache, :template_class
+  attr_reader :root, :extension, :cache, :locals
 
   def initialize(root, extension: nil, cache: false, locals: {})
-    opts ||= {}
     @root = Pathname.new(root.to_s)
     @extension = extension ? ".#{extension}" : nil
     @cache = cache ? {} : NullCache.new
-
-    @template_class =
-      Class.new(Nm::Template) do
-        locals.to_h.each{ |key, value| define_method(key){ value } }
-      end
+    @locals = locals
   end
 
   def inspect
@@ -31,11 +26,11 @@ class Nm::Source
       end
   end
 
-  def render(template_name, locals = {})
-    @template_class.new(self, file_path!(template_name), locals.to_h).__data__
+  def render(template_name, context: Nm.default_context, locals: {})
+    Nm::Context
+      .new(context, source: self, locals: @locals)
+      .render(template_name, locals)
   end
-
-  alias_method :partial, :render
 
   def file_path!(template_name)
     if (path = file_path(template_name)).nil?
@@ -71,11 +66,5 @@ class Nm::Source
     def keys
       []
     end
-  end
-end
-
-class Nm::DefaultSource < Nm::Source
-  def initialize
-    super("/")
   end
 end

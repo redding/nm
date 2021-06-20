@@ -27,4 +27,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency("much-style-guide", ["~> 0.6.4"])
   gem.add_development_dependency("assert",           ["~> 2.19.6"])
+
+  gem.add_dependency("much-mixin", ["~> 0.2.4"])
 end
