@@ -20,7 +20,7 @@ class Nm::Source
     let(:root){ Factory.template_root }
     let(:source){ unit_class.new(root) }
 
-    should have_readers :root, :ext, :cache, :template_class
+    should have_readers :root, :extension, :cache, :template_class
     should have_imeths :data, :render, :partial
 
     should "know its root" do
@@ -28,11 +28,11 @@ class Nm::Source
     end
 
     should "know its extension for looking up source files" do
-      assert_that(subject.ext).is_nil
+      assert_that(subject.extension).is_nil
 
-      ext = Factory.string
-      source = unit_class.new(root, ext: ext)
-      assert_that(source.ext).equals(".#{ext}")
+      extension = Factory.string
+      source = unit_class.new(root, extension: extension)
+      assert_that(source.extension).equals(".#{extension}")
     end
 
     should "not cache templates by default" do
@@ -100,15 +100,15 @@ class Nm::Source
         .equals(subject.render(template_name, file_locals))
     end
 
-    should "only render templates with the matching ext if one is specified" do
-      source = unit_class.new(root, ext: "nm")
+    should "only render templates with the matching extension if one is specified" do
+      source = unit_class.new(root, extension: "nm")
       file_path = Factory.template_file("locals.nm")
       ["locals", "locals.nm"].each do |name|
         assert_that(source.render(name, file_locals))
           .equals(Nm::Template.new(source, file_path, file_locals).__data__)
       end
 
-      source = unit_class.new(root, ext: "inem")
+      source = unit_class.new(root, extension: "inem")
       file_path = Factory.template_file("locals_alt.data.inem")
       ["locals", "locals_alt", "locals_alt.data", "locals_alt.data.inem"]
         .each do |name|
@@ -116,12 +116,12 @@ class Nm::Source
             .equals(Nm::Template.new(source, file_path, file_locals).__data__)
         end
 
-      source = unit_class.new(root, ext: "nm")
+      source = unit_class.new(root, extension: "nm")
       ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_that{ source.render(name, file_locals) }.raises(ArgumentError)
       end
 
-      source = unit_class.new(root, ext: "data")
+      source = unit_class.new(root, extension: "data")
       ["locals_alt", "locals_alt.data", "locals_alt.data.inem"].each do |name|
         assert_that{ source.render(name, file_locals) }.raises(ArgumentError)
       end
