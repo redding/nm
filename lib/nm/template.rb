@@ -81,20 +81,9 @@ class Nm::Template
   alias_method :_map, :__map__
   alias_method :m,    :__map__
 
-  def __render__(*args)
-    data = @__source__.render(*args)
-    @__dstack__[-1] = @__dstack__[-1].__nm_add_call_data__("render", data)
-
-    self
-  end
-
-  alias_method :render,  :__render__
-  alias_method :_render, :__render__
-  alias_method :r,       :__render__
-
   def __partial__(*args)
-    data = @__source__.partial(*args)
-    @__dstack__[-1] = @__dstack__[-1].__nm_add_call_data__("partial", data)
+    @__dstack__[-1] =
+      @__dstack__[-1].__nm_add_partial_data__(@__source__.partial(*args))
 
     self
   end

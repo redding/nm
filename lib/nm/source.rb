@@ -6,17 +6,17 @@ require "nm/template"
 module Nm; end
 
 class Nm::Source
-  attr_reader :root, :ext, :cache, :template_class
+  attr_reader :root, :extension, :cache, :template_class
 
-  def initialize(root, opts = nil)
+  def initialize(root, extension: nil, cache: false, locals: {})
     opts ||= {}
     @root = Pathname.new(root.to_s)
-    @ext = opts[:ext] ? ".#{opts[:ext]}" : nil
-    @cache = opts[:cache] ? {} : NullCache.new
+    @extension = extension ? ".#{extension}" : nil
+    @cache = cache ? {} : NullCache.new
 
     @template_class =
       Class.new(Nm::Template) do
-        (opts[:locals] || {}).each{ |key, value| define_method(key){ value } }
+        locals.to_h.each{ |key, value| define_method(key){ value } }
       end
   end
 
@@ -31,25 +31,34 @@ class Nm::Source
       end
   end
 
-  def render(template_name, locals = nil)
-    if (filename = source_file_path(template_name)).nil?
-      template_desc = "a template file named #{template_name.inspect}"
-      template_desc += " that ends in #{@ext.inspect}" unless @ext.nil?
-      raise ArgumentError, "#{template_desc} does not exist"
-    end
-    @template_class.new(self, filename, locals || {}).__data__
+  def render(template_name, locals = {})
+    @template_class.new(self, file_path!(template_name), locals.to_h).__data__
   end
 
   alias_method :partial, :render
 
-  private
-
-  def source_file_path(name)
-    Dir.glob(root.join(source_file_glob_string(name))).first
+  def file_path!(template_name)
+    if (path = file_path(template_name)).nil?
+      message  = "a template file named #{template_name.inspect}"
+      message += " that ends in #{@extension.inspect}" unless @extension.nil?
+      message += " does not exist"
+      raise ArgumentError, message
+    end
+    path
   end
 
-  def source_file_glob_string(name)
-    !@ext.nil? && name.end_with?(@ext) ? name : "#{name}*#{@ext}"
+  private
+
+  def file_path(template_name)
+    Dir.glob(root.join(file_glob_string(template_name))).first
+  end
+
+  def file_glob_string(template_name)
+    if !@extension.nil? && template_name.end_with?(@extension)
+      template_name
+    else
+      "#{template_name}*#{@extension}"
+    end
   end
 
   class NullCache

@@ -18,10 +18,9 @@ class Nm::Template
     desc "when init"
     subject{ unit_class.new }
 
-    should have_imeths :__data__, :__node__, :__map__, :__render__, :__partial__
+    should have_imeths :__data__, :__node__, :__map__, :__partial__
     should have_imeths :node, :_node, :n
     should have_imeths :map,  :_map,  :m
-    should have_imeths :render,  :_render,  :r
     should have_imeths :partial, :_partial, :p
 
     should "have empty data if no markup meths called or no source given" do
@@ -34,9 +33,6 @@ class Nm::Template
 
       t = Nm::Template.new
       assert_that(t.__map__([], &Proc.new{})).equals(t)
-
-      t = Nm::Template.new
-      assert_that(t.__render__(Factory.template_file("obj"))).equals(t)
 
       t = Nm::Template.new
       assert_that(t.__partial__(Factory.template_file("obj"))).equals(t)
@@ -121,7 +117,9 @@ class Nm::Template
     end
   end
 
-  class RenderTests < InitTests
+  class PartialMethodTests < InitTests
+    desc "`partial` method"
+
     let(:source){ Nm::Source.new(Factory.template_root) }
     let(:obj_template_name){ "obj" }
     let(:obj) do
@@ -141,65 +139,6 @@ class Nm::Template
         { "3" => 3 },
       ]
     end
-  end
-
-  class RenderMethodTests < RenderTests
-    desc "`render` method"
-
-    should "render a template for the given template name and add its data" do
-      t = Nm::Template.new(source)
-      assert_that(t.__render__(obj_template_name).__data__).equals(obj)
-    end
-
-    should "be aliased as `render`, `_render` and `r`" do
-      t = Nm::Template.new(source)
-      assert_that(t.__render__(obj_template_name).__data__).equals(obj)
-
-      t = Nm::Template.new(source)
-      assert_that(t.render(obj_template_name).__data__).equals(obj)
-
-      t = Nm::Template.new(source)
-      assert_that(t._render(obj_template_name).__data__).equals(obj)
-
-      t = Nm::Template.new(source)
-      assert_that(t.r(obj_template_name).__data__).equals(obj)
-    end
-
-    should "merge if call returns an obj and called after `__node__`" do
-      t = Nm::Template.new(source)
-      t.__node__("1", "One")
-
-      exp = { "1" => "One" }.merge(obj)
-      assert_that(t.__render__(obj_template_name).__data__).equals(exp)
-    end
-
-    should "complain if call returns an obj and called after `__map__`" do
-      t = Nm::Template.new(source)
-      t.__map__([1, 2, 3])
-      assert_that{ t.__render__(obj_template_name).__data__ }
-        .raises(Nm::InvalidError)
-    end
-
-    should "concat if call returns a list and called after `__map__`" do
-      t = Nm::Template.new(source)
-      t.__map__([1, 2, 3])
-
-      exp = [1, 2, 3].concat(list)
-      assert_that(t.__render__(list_template_name).__data__).equals(exp)
-    end
-
-    should "complain if call returns a list and called after `__node__`" do
-      t = Nm::Template.new(source)
-      t.__node__("1", "One")
-
-      assert_that{ t.__render__(list_template_name).__data__ }
-        .raises(Nm::InvalidError)
-    end
-  end
-
-  class PartialMethodTests < RenderTests
-    desc "`partial` method"
-
     let(:partial_obj_template_name){ "_obj" }
     let(:partial_obj) do
       {
