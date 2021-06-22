@@ -23,17 +23,24 @@ class Nm::Context
 
   def render(template_name, locals = {})
     source_file_path = @source.file_path!(template_name)
+    render_content(
+      @source.data(source_file_path),
+      locals: locals,
+      file_path: source_file_path,
+    )
+  end
 
+  alias_method :partial, :render
+
+  def render_content(content, locals: {}, file_path: nil)
     @context.__nm_push_render__(locals.to_h)
     @context.instance_eval(
-      "#{locals_code_for(locals)};#{@source.data(source_file_path)}",
-      source_file_path,
+      "#{locals_code_for(locals)};#{content}",
+      file_path,
       1,
     )
     @context.__nm_data__.tap{ |_data| @context.__nm_pop_render__ }
   end
-
-  alias_method :partial, :render
 
   private
 
