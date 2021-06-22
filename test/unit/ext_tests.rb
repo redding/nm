@@ -8,7 +8,7 @@ module Nm::Ext
     desc "Nm ruby extension"
     subject{ Nm }
 
-    should "define and invalid runtime error" do
+    should "define an invalid runtime error" do
       assert_that(subject::InvalidError.new).is_a(RuntimeError)
     end
   end
