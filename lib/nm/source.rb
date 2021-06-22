@@ -42,6 +42,15 @@ class Nm::Source
     path
   end
 
+  def ==(other)
+    return super unless other.is_a?(self.class)
+
+    root == other.root &&
+    extension == other.extension &&
+    cache == other.cache &&
+    locals == other.locals
+  end
+
   private
 
   def file_path(template_name)
@@ -65,6 +74,10 @@ class Nm::Source
 
     def keys
       []
+    end
+
+    def ==(other)
+      other.is_a?(self.class)
     end
   end
 end

@@ -23,7 +23,7 @@ class Nm::Context
     let(:source){ Nm::Source.new(template_root) }
     let(:locals){ { "key" => "a-value" } }
 
-    should have_imeths :render, :partial
+    should have_imeths :render, :partial, :render_content
 
     should "setup the context to render Nm templates" do
       local_name, local_val = [Factory.string, Factory.string]
