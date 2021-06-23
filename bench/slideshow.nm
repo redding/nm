@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 node "slideshow" do
   node "start_slide", view.start_slide
   node "slides" do

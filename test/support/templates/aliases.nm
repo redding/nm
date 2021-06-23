@@ -1,4 +1,6 @@
-_map (1..1) do
+# frozen_string_literal: true
+
+_map(1..1) do
   n        "node local value",     node
   _node    "map local value",      map
   __node__ "context method value", helper_method1

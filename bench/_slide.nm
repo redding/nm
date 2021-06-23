@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 node "id",    slide.id
 node "title", slide.title
 node "image", slide.image_url

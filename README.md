@@ -132,7 +132,7 @@ node "slideshow" do
   node "start_slide", start_slide
   node "slides" do
     map slides do |slide|
-      partial "_slide.json", :slide => slide
+      partial "_slide.json", slide: slide
     end
   end
 end
